@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Tested via AssignmentsController
 require "#{Rails.root}/lib/article_utils"
 require "#{Rails.root}/lib/importers/rating_importer"
@@ -19,7 +20,6 @@ class AssignmentManager
     import_article_from_wiki unless @article
     # TODO: update rating via Sidekiq worker
     update_article_rating if @article
-
     Assignment.create!(user_id: @user_id, course: @course,
                        article_title: @clean_title, wiki: @wiki, article: @article,
                        role: @role)

@@ -1,6 +1,6 @@
 import '../../testHelper';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import GetHelpButton from '../../../app/assets/javascripts/components/common/get_help_button.jsx';
 
 GetHelpButton.__Rewire__('UserStore', {
@@ -25,7 +25,7 @@ describe('GetHelpButton', () => {
     const currentUser = { role: 1 };
 
     const TestGetHelpButton = ReactTestUtils.renderIntoDocument(
-      <GetHelpButton current_user={currentUser} key="get_help" />
+      <GetHelpButton currentUser={currentUser} key="get_help" store={reduxStore} />
     );
 
     const popContainer = ReactTestUtils.findRenderedDOMComponentWithClass(TestGetHelpButton, 'pop__container');
@@ -47,7 +47,7 @@ describe('GetHelpButton', () => {
     const currentUser = { role: 1 };
 
     const TestGetHelpButton = ReactTestUtils.renderIntoDocument(
-      <GetHelpButton current_user={currentUser} key="get_help" />
+      <GetHelpButton currentUser={currentUser} key="get_help" store={reduxStore} />
     );
 
     const popContainer = ReactTestUtils.findRenderedDOMComponentWithClass(TestGetHelpButton, 'pop__container');
@@ -84,7 +84,7 @@ describe('GetHelpButton', () => {
     const currentUser = { role: 1 };
 
     const TestGetHelpButton = ReactTestUtils.renderIntoDocument(
-      <GetHelpButton current_user={currentUser} key="get_help" />
+      <GetHelpButton currentUser={currentUser} key="get_help" store={reduxStore} />
     );
 
     const popContainer = ReactTestUtils.findRenderedDOMComponentWithClass(TestGetHelpButton, 'pop__container');
@@ -101,7 +101,7 @@ describe('GetHelpButton', () => {
     const currentUser = { role: 0 };
 
     const TestGetHelpButton = ReactTestUtils.renderIntoDocument(
-      <GetHelpButton current_user={currentUser} key="get_help" />
+      <GetHelpButton currentUser={currentUser} key="get_help" store={reduxStore} />
     );
 
     const popContainer = ReactTestUtils.findRenderedDOMComponentWithClass(TestGetHelpButton, 'pop__container');

@@ -5,13 +5,21 @@
 # Author: Bodhisattwa
 # Author: Elias Ahmmad
 # Author: Kayser Ahmad
+# Author: Mohammed Galib Hasan
+# Author: Rasal Lia
 # Author: আজিজ
 ---
 bn:
   application:
     cancel: বাতিল
     dashboard: উইকি ইডি ড্যাশবোর্ড
+    documentation: নথিপত্র
+    error: 'একটি ভুল অাছে:'
     explore: অন্বেষণ করুন
+    field_required: বিষয়টি প্রয়োজনীয়
+    field_invalid_characters: এখানে অকার্যকর অক্ষর রয়েছে
+    field_invalid_date: এখানে বববব-মম-দদ বিন্যাসে একটি তারিখ প্রয়োজন
+    field_invalid_date_time: সমাপ্তি অবশ্যই শুরুর পরে হতে হবে। (ঘন্টা ০ থেকে ২৩ পর্যন্ত)
     greeting2: স্বাগতম!
     greeting_extended: উইকিপিডিয়ায় স্বাগতম
     greeting: নমস্কার!
@@ -22,7 +30,8 @@ bn:
     log_out: প্রস্থান করুন
     my_dashboard: আমার ড্যাশবোর্ড
     recent_activity: সাম্প্রতিক কার্যকালাপ
-    search: ask.wikiedu.org তে অনুসন্ধান করুন
+    report_problem: সমস্যার কথা জানান
+    search: প্রশ্ন থাকলে জিজ্ঞাস করুন
     sign_up_extended: উইকিপিডিয়া দিয়ে নিবন্ধন করুন
     sign_up_log_in_extended: উইকিপিডিয়া দিয়ে
     sign_up: নিবন্ধন
@@ -31,6 +40,18 @@ bn:
     change: পরিবর্তন
     details: বিস্তারিত
     confirm: ঠিক আছে
+  dashboard:
+    create_note: অাপনার প্রথম কোর্স তৈরি করতে কোর্স তৈরী করুনে চাপ দিন।
+    create_preparation_note: শুরুর পূর্বে একাডেমিক পঞ্জিকা হাতে প্রাপ্তির বিষয় নিশ্চিত
+      হউন; এসাইনমেন্ট নকশার সরঞ্জাম অাপনার ক্লাশের তারিখগুলো ব্যবহার করবে - স্কুল
+      বন্ধ ও বন্ধের দিনসহ- অাপনার পছন্দকৃত দিবসসমূহের সাথে সমন্বয় করতে। স্মরণ রাখুন,
+      অাপনি অাপনার সুবিধার্থে সর্বদা সময়সীমা সংশোধন করতে পারেন।
+    explore_course_pages: কোর্সের পৃষ্ঠাগুলো অন্বেষণ করুন
+    join_note: আপনি প্রশিক্ষকের নিকট হতে আপনার পাসওয়ার্ড পেলে, আপনার কোর্স খুঁজুনে
+      চাপ দিয়ে খোঁজ করুন এবং অংশগ্রহণ করুন।
+    no_courses_instructor: মনে হচ্ছে অাপনার কোন কোর্স নেই।
+    no_courses_student: মনে হচ্ছে আপনি এখন পর্যন্ত কোন কোর্সে অংশগ্রহণ করেননি।
+    opt_out: পরিচিত পর্বে অংশ না নেয়ার অনুরোধ
   home:
     log_in: উইকিপিডিয়া দিয়ে প্রবেশ করুন
     sign_up: উইকিপিডিয়া দিয়ে নিবন্ধন করুন
@@ -41,6 +62,7 @@ bn:
     all: কর্মকাণ্ড
     label: কর্মকাণ্ড
   articles:
+    deleted: (অপসারিত)
     edited_by: 'সম্পাদনা করেছেন:'
     edited_mobile: নিবন্ধ
     hide: আড়াল করো
@@ -54,8 +76,22 @@ bn:
     view: নিবন্ধ দেখুন
     view_all: সব দেখুন
     view_on_wiki: উইকিতে দেখুন
+    wiki: উইকি
     wp10: কাঠামোগত সম্পূর্ণতা
   assignments:
+    title_too_large: শিরোনামের অক্ষর ২৫৫টির বেশী হতে পারবে না
+    assign_self: নিজেকে একটি প্রবন্ধে নিয়োজিত করুন
+    assign_tooltip: একটি বরাদ্দকৃত নিবন্ধ হচ্ছে তা যা আপনি তৈরি বা উন্নয়নের পরিকল্পনা
+      করছেন।
+    confirm_add_available: অাপনি কি নিশ্চিত আপনি %{title} যুক্ত করতে চান?
+    confirm_addition: অাপনি কি নিশ্চিত আপনি এই %{title} %{username} কে বরাদ্দ দিতে
+      চান?
+    confirm_deletion: অাপনি কি নিবন্ধের এই নির্ধারিত কাজ বাতিল করতে চান?
+    label: বরাদ্দ করুন
+    loading: কার্যভার লোড হচ্ছে...
+    none_short: কোন নিবন্ধ বরাদ্দ দেয়া হয়নি
+    none: এই কোর্সের কোন নির্ধারিত প্রবন্ধ নেই।
+    no_available: এই কোর্সের কোন উপযুক্ত প্রবন্ধ নেই।
     remove: অপসারণ করুন
     reviewers: নিরীক্ষক(গণ)
     select: নির্বাচন করুন
@@ -65,6 +101,14 @@ bn:
   campaign:
     campaign: প্রচারাভিযান
     none: কোনটিই নয়
+  categories:
+    add_template: টেমপ্লেট যোগ করুন
+    add_this_template: এই টেমপ্লেট যোগ করুন
+    name: নাম
+    category_name: বিষয়শ্রেণীর নাম
+    template_name: টেমপ্লেটের নাম
+  chat:
+    label: চ্যাট
   courses:
     activity: কর্মকাণ্ড
     actions: কার্যসমূহ
@@ -73,6 +117,9 @@ bn:
       legend_class_canceled: ছুটি/বাতিল
     cancel: বাতিল
     campaign_courses: '%{title} কোর্স'
+    campaign_articles: '%{title} নিবন্ধগুলো'
+    campaign_users: '%{title} সম্পাদকবৃন্দ'
+    course: পথ
     courses_taught: কোর্সের ধারণা
     creator:
       course_project: মূল প্রকল্প
@@ -88,11 +135,19 @@ bn:
       find: আপনার কোর্স খুঁজুন
       start_date: শুরুর তারিখ
       subject: বিষয়
+    delete_suggestion: অপসারণ
     dismiss_survey: খারিজ
     dismiss_survey_confirm: আপনি কি নিশ্চিত যে আপনি স্থায়ীভাবে এই জরিপ খারিজ করতে
       ইচ্ছুক?
+    edit_count: সম্পাদনা গণনা
+    enable_chat: চ্যাট সক্রিয় করুন
     end: শেষ
-    courses_enrolled: কোর্স ভর্তি
+    ended: কোর্সটি শেষ হয়েছে।
+    courses_enrolled: কোর্সে ভর্তি
+    error:
+      invalid_slug: কোর্সের জন্য ফাঁকা বিদ্যালয়/শিরোনাম।
+    features_feedback: 'স্বয়ংক্রিয় পরামর্শ:'
+    feedback: প্রতিক্রিয়া
     join: যোগ দিন
     join_prompt: '''%{title}''-এ যোগ দিবেন?'
     join_successful: আপনি সফলভাবে %{title}-এ যোগ দিয়েছেন।
@@ -102,12 +157,18 @@ bn:
     none: কোনটিই নয়
     overview: প্রধান পাতা
     school: বিদ্যালয়
+    school_and_term: প্রতিষ্ঠান/মেয়াদ
     start: শুরু করুন
     students: ছাত্রগণ
     students_count: '# ছাত্রগণ'
     student_editors: '# ছাত্র সম্পাদকগণ'
     students_short: ছাত্রগণ
+    suggestions_sending: প্রতিক্রিয়া পাঠানো হচ্ছে...
+    suggestions_sent: প্রতিক্রিয়া পাঠানো হয়েছে। আপনার ইনপুটের জন্য ধন্যবাদ।
+    suggestions_failed: প্রতিক্রিয়া পাঠানো যায়নি। পরে আবার চেষ্টা করুন।
     user_role: ভূমিকা
+    subject: বিষয়
+    timeline_enabled: সময়ক্রম সক্রিয় আছে
     timeline_link: সময়ক্রম
     time_zone_message: আপনার স্থানীয় সময় অঞ্চল অনুসারে শুরুর এবং শেষের সময় প্রদর্শন
       করা হয়।
@@ -117,23 +178,29 @@ bn:
       one: স্বেচ্ছাসেবক
       other: স্বেচ্ছাসেবক
   courses_generic:
+    all_courses: সকল কার্যক্রমসমুহ
     cancel: বাতিল
+    course: প্রোগ্রাম
     courses_taught: প্রোগ্রামের ধারণা
     campaign_courses: '%{title} প্রোগ্রাম'
     creator:
       course_description: প্রকল্পের বর্ণনা
       course_school: প্রতিষ্ঠান
+      course_term: কখন
       course_title: প্রোগ্রামের শিরোনাম
       create_label: নতুন প্রকল্প তৈরি করুন
-      create_new: একটি নতুন প্রকল্প তৈরি করুন
+      create_new: একটি স্বাধীন প্রোগ্রাম তৈরি করুন
       create_short: প্রোগ্রাম তৈরি করুন
       find: একটি প্রোগ্রাম খুঁজুন
+      save_cloned_course: সংরক্ষণ
     enroll: সম্পাদক যোগ করুন
     enrollment: অংশগ্রহণ
     courses_enrolled: প্রোগ্রাম অংশগ্রহণ করেছে
     school: প্রতিষ্ঠান
+    school_and_term: প্রতিষ্ঠান/কখন
     student_editors: সম্পাদকগণ
     students: সম্পাদকগণ
+    students_taught: মোট সম্পাদক
     students_short: সম্পাদকগণ
   editable:
     edit: সম্পাদনা
@@ -169,6 +236,10 @@ bn:
     diff_hide: আড়াল করো
     title: শিরোনাম
     view_on_wiki: উইকিতে পার্থক্য দেখুন
+    see_more: আরো দেখুন
+  suggestions:
+    suggestion_docs:
+      does_not_exist: এই নিবন্ধটি উইকিপিডিয়ায় বিদ্যমান নেই।
   timeline:
     add_week: সপ্তাহ যোগ করুন
     no_activity_this_week: এই সপ্তাহে কোনও বৈঠকের সময়সূচী নেয়
@@ -199,6 +270,10 @@ bn:
     role:
       student: ছাত্র
       online_volunteer: অনলাইন স্বেচ্ছাসেবক
+  user_profiles:
+    bio_placeholder: আপনার জীবনী যোগ করুন (ঐচ্ছিক)
+    location_placeholder: আপনার অবস্থান যোগ করুন (ঐচ্ছিক)
+    institution_placeholder: ইনস্টিটিউটের নাম (ঐচ্ছিক)
   wizard:
     read_more: আরও পড়ুন
     summary: সারাংশ

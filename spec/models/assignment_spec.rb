@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: assignments
@@ -17,6 +18,7 @@
 require 'rails_helper'
 
 describe Assignment do
+  before { stub_wiki_validation }
   describe 'assignment creation' do
     context 'when no similar assignments exist' do
       it 'creates Assignment objects' do

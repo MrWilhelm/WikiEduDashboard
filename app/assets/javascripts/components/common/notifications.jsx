@@ -1,8 +1,11 @@
 import React from 'react';
-import NotificationStore from '../../stores/notification_store.js';
-import NotificationActions from '../../actions/notification_actions.js';
+import createReactClass from 'create-react-class';
+import { connect } from "react-redux";
 
-const Notifications = React.createClass({
+import { removeNotification, NotificationActions } from '../../actions/notification_actions.js';
+import NotificationStore from '../../stores/notification_store.js';
+
+const Notifications = createReactClass({
   displayName: 'Notifications',
 
   mixins: [NotificationStore.mixin],
@@ -16,7 +19,10 @@ const Notifications = React.createClass({
   },
 
   _handleClose(notification) {
-    return NotificationActions.removeNotification(notification);
+    if (notification.store === 'flux') {
+      return NotificationActions.removeNotification(notification);
+    }
+    return this.props.removeNotification(notification);
   },
 
   _renderNotification(notification, i) {
@@ -42,7 +48,7 @@ const Notifications = React.createClass({
     let closeIcon;
     if (notification.closable) {
       closeIcon = (
-        <svg tabIndex="0" onClick={this._handleClose.bind(this, notification)} viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" style={{ fill: 'currentcolor', verticalAlign: 'middle', width: '32px', height: '32px' }}><g><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"></path></g></svg>
+        <svg tabIndex="0" onClick={this._handleClose.bind(this, notification)} viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" style={{ fill: 'currentcolor', verticalAlign: 'middle', width: '32px', height: '32px' }}><g><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z" /></g></svg>
       );
     }
 
@@ -57,7 +63,8 @@ const Notifications = React.createClass({
   },
 
   render() {
-    const notifications = this.state.notifications.map((n, i) => this._renderNotification(n, i));
+    const allNotifications = this.props.notifications.concat(this.state.notifications);
+    const notifications = allNotifications.map((n, i) => this._renderNotification(n, i));
 
     return (
       <div className="notifications">
@@ -67,4 +74,10 @@ const Notifications = React.createClass({
   }
 });
 
-export default Notifications;
+const mapStateToProps = state => ({
+  notifications: state.notifications
+});
+
+const mapDispatchToProps = { removeNotification };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe 'Surveys', type: :feature, js: true do
@@ -6,7 +7,8 @@ describe 'Surveys', type: :feature, js: true do
   include Rapidfire::AnswerSpecHelper
 
   before do
-    include Devise::TestHelpers, type: :feature
+    include type: :feature
+    include Devise::TestHelpers
     page.current_window.resize_to(1920, 1080)
   end
 
@@ -39,7 +41,7 @@ describe 'Surveys', type: :feature, js: true do
   # end
 
   describe 'Editing a Survey' do
-    # let!(:question_group)  { FactoryGirl.create(:question_group, name: "Survey Section 1") }
+    # let!(:question_group)  { FactoryBot.create(:question_group, name: "Survey Section 1") }
     # let!(:survey)  { create(:survey, name: "Dumb Survey", :rapidfire_question_groups => [question_group]) }
 
     # before :each do

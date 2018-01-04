@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 require "#{Rails.root}/lib/alerts/continued_course_activity_alert_manager"
 
@@ -15,7 +16,8 @@ describe ContinuedCourseActivityAlertManager do
                       article_id: article.id, user_id: user.id)
   end
   let(:subject) { ContinuedCourseActivityAlertManager.new([course]) }
-  let(:admin) { create(:admin, email: 'staff@wikiedu.org') }
+  # Only Wikipedia Expert, indicated by greeter: true, should get emails.
+  let(:admin) { create(:admin, email: 'staff@wikiedu.org', greeter: true) }
 
   before do
     create(:courses_user, user_id: user.id, course_id: course.id,

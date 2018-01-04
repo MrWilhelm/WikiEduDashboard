@@ -17,6 +17,7 @@ ca:
   application:
     cancel: Cancel·lar
     dashboard: Wiki Ed Tauler De Control
+    documentation: Documentació
     error: 'Hi ha hagut un error:'
     explore: Exploreu!
     field_required: Aquest camp és obligatori
@@ -33,6 +34,7 @@ ca:
     my_dashboard: Tauler de control
     recent_activity: Activitat recent
     search: feu una pregunta
+    search_results: 'Resultats per a: «%{search_terms}»'
     sign_up_extended: Inicia la sessió a la Viquipèdia
     sign_up_log_in_extended: amb la Viquipèdia
     sign_up: Registreu-vos
@@ -74,6 +76,7 @@ ca:
     assigned_to: Assignat a
     character_doc: La suma de total de caràcters afegits als articles pels estudiants
       inscrits durant les dates d'inici i finalització
+    deleted: (suprimit)
     edited: Articles editats
     edited_mobile: Articles
     label: Articles
@@ -198,6 +201,7 @@ ca:
     dismiss_survey: Descarta
     dismiss_survey_confirm: Esteu segurs que voleu rebutjar aquesta enquesta?
     duration: Durada del curs
+    edit_count: Recompte d’edicions
     edit_course_dates: Edita les dates del curs
     end: Final
     enroll: Inscriure's
@@ -217,6 +221,7 @@ ca:
     join_course: Uneix-te al curs
     join_prompt: Unir-se a '%{title}'?
     join_successful: Us heu unit amb èxit a %{title}.
+    join_no_passcode: Esteu segur que voleu inscribir-vos a aquest curs?
     leave_confirmation: N'estàs segur què vols abandonar el curs?
     leave_course: Abandonar el curs
     loading: S'està carregant...
@@ -263,6 +268,7 @@ ca:
     training_nav: Anar a la formació
     unsubmitted: Cursos no enviats
     untrained: No entrenat
+    update_stats: Actualitza les estadístiques
     uploads_none: Aquesta classe encara no ha contribuït amb cap imatge o algun altre
       tipus de fitxer a Wikimedia Commons.
     view: Vegeu el curs
@@ -295,15 +301,18 @@ ca:
       checking_for_uniqueness: Estem revisant si aquest programa és únic.
       course_description: Descripció del programa
       course_school: Institució
+      course_term: Quan
+      course_term_placeholder: Quan
       course_title: Títol del programa
       create_button: Crea el teu programa!
       create_label: Crea un nou programa
-      create_new: Crea un nou programa
+      create_new: Crea un programa independent
       create_short: Crea programa
       find: Cerca un programa
       intro: El títol del programa és obligatori, tota la resta de camps es poden
         emplenar més tard. Clica "Creat el teu programa!" per a començar a construir
         la pàgina per al teu projecte wiki.
+      save_cloned_course: Desa
     edit_course_dates: Edita les dates del projecte
     enroll: Afegiex editor
     enrollment: Participació
@@ -326,6 +335,9 @@ ca:
     cancel: Cancel·la
     save: Desa
   metrics:
+    label: Activitat del curs
+    are_updated: Segons l'última actualització del sistema
+    last_update: Darrera actualització
     activity: Activitat recent
     are_trained: està al dia amb la formació
     articles_created: Articles creats
@@ -378,6 +390,7 @@ ca:
     none: El projecte no té activitat d'edició recent.
     time_doc: Hora de cada revisió amb la teva hora local
     title: Títol
+    see_more: Veure més
   tasks:
     conseq: La tasca %{task} ja és en curs!
   timeline:

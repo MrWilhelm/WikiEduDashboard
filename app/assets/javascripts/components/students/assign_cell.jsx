@@ -1,18 +1,22 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import AssignButton from './assign_button.jsx';
 import { trunc } from '../../utils/strings';
 import CourseUtils from '../../utils/course_utils.js';
 
-const AssignCell = React.createClass({
+const AssignCell = createReactClass({
   displayName: 'AssignCell',
 
   propTypes: {
-    assignments: React.PropTypes.array,
-    prefix: React.PropTypes.string,
-    current_user: React.PropTypes.object,
-    student: React.PropTypes.object,
-    editable: React.PropTypes.bool,
-    role: React.PropTypes.number
+    assignments: PropTypes.array,
+    prefix: PropTypes.string,
+    current_user: PropTypes.object,
+    student: PropTypes.object,
+    editable: PropTypes.bool,
+    role: PropTypes.number,
+    tooltip_message: PropTypes.string,
+    course: PropTypes.object.isRequired,
   },
 
   stop(e) {
@@ -24,7 +28,7 @@ const AssignCell = React.createClass({
   render() {
     let link;
     if (this.props.assignments.length > 0) {
-      const article = CourseUtils.articleFromAssignment(this.props.assignments[0]);
+      const article = CourseUtils.articleFromAssignment(this.props.assignments[0], this.props.course.home_wiki);
       if (this.props.assignments.length > 1) {
         const articleCount = I18n.t('users.number_of_articles', { count: this.props.assignments.length });
         link = (
@@ -56,7 +60,7 @@ const AssignCell = React.createClass({
     const permitted = isCurrentUser || (instructorOrAdmin && this.props.editable);
 
     return (
-      <div>
+      <div className="inline-button-peer">
         {link}
         <AssignButton {...this.props} role={this.props.role} permitted={permitted} ref="button" />
       </div>

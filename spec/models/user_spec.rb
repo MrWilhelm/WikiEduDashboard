@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -20,6 +21,9 @@
 #  greeted             :boolean          default(FALSE)
 #  greeter             :boolean          default(FALSE)
 #  locale              :string(255)
+#  chat_password       :string(255)
+#  chat_id             :string(255)
+#  registered_at       :datetime
 #
 
 require 'rails_helper'
@@ -208,13 +212,17 @@ describe User do
   end
 
   describe '#search' do
-    let(:search_user) { create(:user, email: 'findme@example.com',
-                               real_name: 'Find Me') }
-    let(:similar_search_user) { create(:user, email: 'find@example.com') }
+    let(:search_user) { create(:user, email: 'findme@example.com', real_name: 'Find Me') }
+    let(:similar_search_user) { create(:user, username: 'similar', email: 'find@example.com') }
 
     it 'returns user(s) with given email address' do
       result = User.search_by_email(search_user.email)
 
+      expect(result).to eq([search_user])
+    end
+
+    it 'returns user(s) with given full name' do
+      result = User.search_by_real_name(search_user.real_name)
       expect(result).to eq([search_user])
     end
 

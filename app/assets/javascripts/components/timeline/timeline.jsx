@@ -1,6 +1,9 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-dnd';
 import Touch from 'react-dnd-touch-backend';
+import _ from 'lodash';
 
 import Week from './week.jsx';
 import EmptyWeek from './empty_week.jsx';
@@ -10,32 +13,34 @@ import Affix from '../common/affix.jsx';
 
 import WeekActions from '../../actions/week_actions.js';
 import BlockActions from '../../actions/block_actions.js';
+import CourseActions from '../../actions/course_actions.js';
 
 import BlockStore from '../../stores/block_store.js';
 import WeekStore from '../../stores/week_store.js';
 
 import DateCalculator from '../../utils/date_calculator.js';
 import CourseUtils from '../../utils/course_utils.js';
+import CourseDateUtils from '../../utils/course_date_utils.js';
 
-const Timeline = React.createClass({
+const Timeline = createReactClass({
   displayName: 'Timeline',
 
   propTypes: {
-    loading: React.PropTypes.bool,
-    course: React.PropTypes.object.isRequired,
-    weeks: React.PropTypes.array,
-    week_meetings: React.PropTypes.array,
-    editable_block_ids: React.PropTypes.array,
-    editable: React.PropTypes.bool,
-    controls: React.PropTypes.func,
-    saveGlobalChanges: React.PropTypes.func,
-    cancelGlobalChanges: React.PropTypes.func,
-    saveBlockChanges: React.PropTypes.func,
-    cancelBlockEditable: React.PropTypes.func,
-    all_training_modules: React.PropTypes.array,
-    edit_permissions: React.PropTypes.bool,
-    reorderable: React.PropTypes.bool,
-    enableReorderable: React.PropTypes.func
+    loading: PropTypes.bool,
+    course: PropTypes.object.isRequired,
+    weeks: PropTypes.array,
+    week_meetings: PropTypes.array,
+    editable_block_ids: PropTypes.array,
+    editable: PropTypes.bool,
+    controls: PropTypes.func,
+    saveGlobalChanges: PropTypes.func,
+    cancelGlobalChanges: PropTypes.func,
+    saveBlockChanges: PropTypes.func,
+    cancelBlockEditable: PropTypes.func,
+    all_training_modules: PropTypes.array,
+    edit_permissions: PropTypes.bool,
+    reorderable: PropTypes.bool,
+    enableReorderable: PropTypes.func,
   },
 
   getInitialState() {
@@ -50,6 +55,10 @@ const Timeline = React.createClass({
     return window.removeEventListener('scroll', this._handleScroll);
   },
 
+  hasTimeline() {
+    return this.props.weeks && this.props.weeks.length;
+  },
+
   addWeek() {
     return WeekActions.addWeek();
   },
@@ -57,6 +66,13 @@ const Timeline = React.createClass({
   deleteWeek(weekId) {
     if (confirm(I18n.t('timeline.delete_week_confirmation'))) {
       return WeekActions.deleteWeek(weekId);
+    }
+  },
+
+  deleteAllWeeks() {
+    if (confirm(I18n.t('timeline.delete_weeks_confirmation'))) {
+      return CourseActions.deleteAllWeeks(this.props.course.slug)
+               .then(() => { return window.location.reload(); });
     }
   },
 
@@ -152,6 +168,7 @@ const Timeline = React.createClass({
     }
 
     const weekComponents = [];
+    const weeksBeforeTimeline = CourseDateUtils.weeksBeforeTimeline(this.props.course);
     let i = 0;
 
     this.props.weeks.sort((a, b) => a.order - b.order);
@@ -164,11 +181,10 @@ const Timeline = React.createClass({
     if (this.tooManyWeeks()) {
       tooManyWeeksWarning = (
         <li className="timeline-warning">
-          WARNING! There are not enough non-holiday weeks before the assignment end date! You can click 'Edit Course Dates' to set the meeting dates and holiday dates.
+          WARNING! There are not enough non-holiday weeks before the assignment end date! You can click &apos;Edit Course Dates&apos; to set the meeting dates and holiday dates.
         </li>
       );
     }
-
     // For each week, first insert an extra empty week for each week with empty
     // week meetings, which indicates a blackout week. Then insert the week itself.
     // The index 'i' represents the zero-index week number; both empty and non-empty
@@ -176,7 +192,7 @@ const Timeline = React.createClass({
     this.props.weeks.forEach((week, weekIndex) => {
       while (this.props.week_meetings[i] === '()') {
         const emptyWeekKey = `empty-week-${i}`;
-        const weekAnchorName = `week-${i + 1}`;
+        const weekAnchorName = `week-${i + 1 + weeksBeforeTimeline}`;
         weekComponents.push((
           <div key={emptyWeekKey}>
             <a className="timeline__anchor" name={weekAnchorName} />
@@ -186,6 +202,7 @@ const Timeline = React.createClass({
               index={i + 1}
               timeline_start={this.props.course.timeline_start}
               timeline_end={this.props.course.timeline_end}
+              weeksBeforeTimeline={weeksBeforeTimeline}
             />
           </div>
         )
@@ -193,7 +210,7 @@ const Timeline = React.createClass({
         i++;
       }
 
-      const weekAnchorName = `week-${i + 1}`;
+      const weekAnchorName = `week-${i + 1 + weeksBeforeTimeline}`;
       weekComponents.push((
         <div key={week.id}>
           <a className="timeline__anchor" name={weekAnchorName} />
@@ -217,6 +234,7 @@ const Timeline = React.createClass({
             onMoveBlockUp={this._handleMoveBlock.bind(this, true)}
             onMoveBlockDown={this._handleMoveBlock.bind(this, false)}
             onBlockDrag={this._handleBlockDrag}
+            weeksBeforeTimeline={weeksBeforeTimeline}
           />
         </div>
       )
@@ -242,7 +260,7 @@ const Timeline = React.createClass({
     }
 
     let wizardLink;
-    if (weekComponents.length <= 0) {
+    if (weekComponents.length <= 0 && this.props.edit_permissions && this.props.course.type === 'ClassroomProgramCourse') {
       const wizardUrl = `/courses/${this.props.course.slug}/timeline/wizard`;
       wizardLink = <CourseLink to={wizardUrl} className="button dark button--block timeline__add-assignment">Add Assignment</CourseLink>;
     }
@@ -296,7 +314,7 @@ const Timeline = React.createClass({
         </li>
       ) : (
         <li>
-          <span className="week-nav__add-week" onClick={this.addWeek}>Add Week</span>
+          <button className="week-nav__add-week" onClick={this.addWeek}>Add Week</button>
         </li>
       );
     }
@@ -309,14 +327,25 @@ const Timeline = React.createClass({
 
       const dateCalc = new DateCalculator(this.props.course.timeline_start, this.props.course.timeline_end, navIndex, { zeroIndexed: true });
       const navWeekKey = `week-${navIndex}`;
-      const navWeekLink = `#week-${navIndex + 1}`;
+      const navWeekLink = `#week-${navIndex + 1 + weeksBeforeTimeline}`;
       return (
         <li className={navClassName} key={navWeekKey}>
-          <a href={navWeekLink}>{week.title || I18n.t('timeline.week_number', { number: navIndex + 1 })}</a>
+          <a href={navWeekLink}>{week.title || I18n.t('timeline.week_number', { number: navIndex + 1 + weeksBeforeTimeline })}</a>
           <span className="pull-right">{dateCalc.start()} - {dateCalc.end()}</span>
         </li>
       );
     });
+
+    let restartTimeline;
+    // Only show the 'Delete Timeline' button if user can edit, course is unsubmitted,
+    // and the timeline is not already empty.
+    if (this.props.edit_permissions && !this.props.course.submitted && this.hasTimeline()) {
+      restartTimeline = (
+        <button className="button border danger button--block" onClick={this.deleteAllWeeks}>
+          {I18n.t('timeline.delete_timeline_and_start_over')}
+        </button>
+      );
+    }
 
     const sidebar = this.props.course.id ? (
       <div className="timeline__week-nav">
@@ -325,6 +354,9 @@ const Timeline = React.createClass({
             <span>{wizardLink}</span>
             {reorderableControls}
             {controls}
+          </section>
+          <section className="timeline-ctas float-container">
+            {restartTimeline}
           </section>
           <div className="panel">
             <ol>
@@ -339,7 +371,6 @@ const Timeline = React.createClass({
     ) : (
       <div className="timeline__week-nav" />
     );
-
 
     return (
       <div>

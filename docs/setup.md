@@ -1,10 +1,22 @@
 [Back to README](../README.md)
 
-## Requirements
- * **Ruby (RVM recommended)**
- * **Node**
- * **NPM**
- * **Bower**
+## TL;DR bare minimum version
+If you know your way around Rails, here's the very short version. Some additional requirements are necessary to make all the tests pass and all the features work, but this should be enough to stand up the app quickly.
+
+* copy `config/application.example.yml` to `config/application.yml`
+* copy `config/database.example.yml` to `config/database.yml`
+* create a MySQL database, `dashboard`
+* install ruby 2.5.0 and nodejs
+* install R
+* `bundle install`
+* `rake db:migrate`
+* `rake campaign:add_campaigns`
+* install bower and yarn
+* `bower install` for some javascript requirements
+* `yarn` for more javascript requirements
+* `gulp` to build assets
+* `guard` or `rails s` to start a server
+* localhost:3000 should load the home page
 
 ## Project Setup
 
@@ -19,14 +31,15 @@
 - Fork this repo, so that you can make changes and push them freely to GitHub.
 - Clone the new WikiEduDashboard repo and enter that directory.
 - On OSX/Debian, make sure you are in the "sudo" group.
-- Install Ruby 2.3.1 (RVM is recommended)
+- Install Ruby 2.5.0 (RVM is documented here; rbenv also works fine.)
     - OSX/Debian:
        - From the WikiEduDashboard directory, run the curl script from [rvm.io](https://rvm.io/)
-       - `rvm install ruby-2.3.1`
+       - `rvm install ruby-2.5.`
     - Windows:
        - Use [RailsInstaller](http://railsinstaller.org/en)
+       - Install [Ruby DevKit](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit)
 - Install Node:
-  - Debian: `apt install nodejs npm`
+  - Debian: `sudo apt install nodejs`
   - OSX: `brew install node` (this assumes you are using [homebrew](brew.sh))
   - Windows: [Download the installer](https://nodejs.org/)
 
@@ -35,15 +48,15 @@
     - $ `bundle install`
     - If some gems fail to install, you may need to install some dependencies, such as: `libmysqlclient-dev libpq-dev libqtwebkit-dev`
 
-- Install NPM modules via Yarn:
-    - $ `sudo npm install yarn -g`
+- [Install Yarn](https://yarnpkg.com/lang/en/docs/install/)
+- Install node modules via Yarn:
     - $ `yarn`
 
 - Install PhantomJS:
-    - $ `sudo npm install -g phantomjs-prebuilt`
+    - $ `sudo yarn global add phantomjs-prebuilt`
 
 - Install Bower and Bower modules:
-    - $ `sudo npm install bower -g`
+    - $ `sudo yarn global add bower`
     - $ `bower install`
 
 - Install Pandoc
@@ -54,25 +67,30 @@
     - Save `application.example.yml` and `database.example.yml` as `application.yml` and `database.yml`, respectively, in the `config` directory. The default settings in `database.yml` will suffice for a development environment.
 
 - Create mysql development and test database:
-    - Install mysql-server
-        - Debian: `sudo apt-get install mysql-server`
+    - Install mysql-server (or mariadb-server)
+        - Debian: `sudo apt install mysql-server`
         - OSX: `brew install mysql`
         - Windows: Install [XAMPP](https://www.apachefriends.org/index.html)
     - Start a mysql command line:
-        - OSX/Debian: `sudo mysql`
+        - Debian: `sudo mysql`
+        - OSX: `mysql.server start` then `sudo mysql`
         - Windows: `C:\xampp\mysql\bin\mysql -u root`
     - `CREATE DATABASE dashboard DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;`
     - `CREATE DATABASE dashboard_testing DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;`
     - `exit`
 
 - Install Redis:
-  - Debian: `sudo apt-get install redis-server`
+  - Debian: `sudo apt install redis-server`
   - OSX: `brew install redis`
   - Windows: Download [the Windows port](https://github.com/MSOpenTech/redis/releases) by the Microsoft Open Tech Group
 
 - Install Gulp (if not already installed)
-  - `sudo npm install -g gulp-cli`
+  - `sudo yarn global add gulp`
 
+- Install R:
+  - Debian: `sudo apt install r-base`
+  - OS X: `brew tap homebrew/science && brew install r`
+  - Also you can refer to this [install R](https://cran.r-project.org/)
 ## Initialize
 1. **Migrate the development and test databases**
       $ `rake db:migrate`
@@ -97,6 +115,10 @@
     you may need to start it manually.
 
       $ `redis-server`
+
+      OR, if you used homebrew to install redis:
+
+      $ `redis-server /usr/local/etc/redis.conf`
 
 3. **Start the server**
 

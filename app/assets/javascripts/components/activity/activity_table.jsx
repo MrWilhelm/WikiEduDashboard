@@ -1,23 +1,38 @@
 import React from 'react';
-import ActivityTableRow from './activity_table_row.jsx';
-import Loading from '../common/loading.jsx';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
 
-const ActivityTable = React.createClass({
+import * as UIActions from '../../actions';
+import ActivityTableRow from './activity_table_row.jsx';
+import Loading from '../common/loading.jsx';
+
+
+const ActivityTable = createReactClass({
   displayName: 'ActivityTable',
 
   propTypes: {
-    loading: React.PropTypes.bool,
-    activity: React.PropTypes.array,
-    headers: React.PropTypes.array,
-    noActivityMessage: React.PropTypes.string
+    loading: PropTypes.bool,
+    activity: PropTypes.array,
+    headers: PropTypes.array,
+    noActivityMessage: PropTypes.string,
+    openKey: PropTypes.string,
+    toggleDrawer: PropTypes.func
   },
 
   getInitialState() {
     return {
       activity: this.props.activity
     };
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.activity !== this.state.activity) {
+      this.setState({ activity: nextProps.activity });
+    }
   },
 
   clearAllSortableClassNames() {
@@ -49,6 +64,7 @@ const ActivityTable = React.createClass({
       const roundedRevisionScore = Math.round(revision.revision_score) || 'unknown';
       const revisionDateTime = moment(revision.datetime).format('YYYY/MM/DD h:mm a');
       const talkPageLink = `${revision.base_url}/wiki/User_talk:${revision.username}`;
+      const isOpen = this.props.openKey === `drawer_${revision.key}`;
 
       return (
         <ActivityTableRow
@@ -63,6 +79,8 @@ const ActivityTable = React.createClass({
           revisionScore={roundedRevisionScore}
           author={revision.username}
           revisionDateTime={revisionDateTime}
+          isOpen={isOpen}
+          toggleDrawer={this.props.toggleDrawer}
         />
       );
     });
@@ -105,7 +123,7 @@ const ActivityTable = React.createClass({
       return (
         <th style={header.style || {}} key={header.key} onClick={this.sortItems} className="sortable" data-sort-key={header.key}>
           {header.title}
-          <span className="sortable-indicator"></span>
+          <span className="sortable-indicator" />
         </th>
       );
     });
@@ -130,7 +148,7 @@ const ActivityTable = React.createClass({
         <thead>
           <tr>
             {ths}
-            <th></th>
+            <th />
           </tr>
         </thead>
         <tbody>
@@ -141,4 +159,12 @@ const ActivityTable = React.createClass({
   }
 });
 
-export default ActivityTable;
+const mapStateToProps = state => ({
+  openKey: state.ui.openKey
+});
+
+const mapDispatchToProps = dispatch => ({
+  toggleDrawer: bindActionCreators(UIActions, dispatch).toggleUI
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActivityTable);

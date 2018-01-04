@@ -1,15 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import { Link } from 'react-router';
 
-const SlideLink = React.createClass({
+const SlideLink = createReactClass({
   displayName: 'SlideLink',
 
   propTypes: {
-    button: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    direction: React.PropTypes.string.isRequired,
-    params: React.PropTypes.object.isRequired,
-    slideId: React.PropTypes.string.isRequired
+    button: PropTypes.bool,
+    disabled: PropTypes.bool,
+    buttonText: PropTypes.string,
+    params: PropTypes.object.isRequired,
+    slideId: PropTypes.string.isRequired
   },
 
   linkParams(props) {
@@ -32,7 +34,7 @@ const SlideLink = React.createClass({
     const href = this._slideLink(linkParams);
     return (
       <Link data-href={href} disabled={this.props.disabled} className={linkClass} to={href}>
-        {this.props.direction} Page
+        {this.props.buttonText}
       </Link>
     );
   }

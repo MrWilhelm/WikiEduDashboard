@@ -10,6 +10,7 @@
 # Author: MojoMann
 # Author: Nemo bis
 # Author: Ragesoss
+# Author: Raymond
 # Author: Robby
 # Author: Vojtěch Dostál
 ---
@@ -22,6 +23,7 @@ qqq:
       Button to cancel an action
       {{Identical|Cancel}}
     dashboard: Application name.
+    documentation: '{{Identical|Documentation}}'
     error: Label for error messages
     explore: |-
       Explore link
@@ -164,6 +166,8 @@ qqq:
       when page view data is being imported.)
   assignments:
     already_exists: Message displayed when trying to create a duplicate assignment
+    title_too_large: Message displayed when title entered exceeds 255 characters to
+      prevent mysql error
     assignees: '{{Identical|Assignee}}'
     assign_other: Button to assign an article to a student
     add_available: Button to add an article title to the list of articles available
@@ -242,6 +246,15 @@ qqq:
       Label for the input to change the title of a campaign
       {{Identical|Title}}
     use_start_end_dates: Label for checkbox to enable start and end dates for a campaign
+  categories:
+    name: '{{Identical|Name}}'
+    category_name: '{{Identical|Category name}}'
+    template_name: '{{Identical|Template name}}'
+    remove: '{{Identical|Remove}}'
+  chat:
+    label: |-
+      Short label for chat / discussion channel
+      {{Identical|Chat}}
   courses:
     activity: Label for link to the 'recent activity' list for a course
     active_courses: |-
@@ -340,6 +353,7 @@ qqq:
         {{Identical|Subject}}
     current: Label for the list of current courses
     delete_course: Button to delete a course
+    delete_suggestion: '{{Identical|Delete}}'
     dismiss_survey: |-
       Button label for dismissing a survey notification (Wiki Ed only)
       {{Identical|Dismiss}}
@@ -355,6 +369,9 @@ qqq:
       user_exists: Error message indicating an invalid Wikimedia username
       invalid_language_or_project: Error message indicating the language and project
         do not correspond to a valid wiki
+      invalid_slug: Error message indicating blank school/title in course slug.
+      duplicate_slug: Error message indicating duplicate course slug.
+    feedback: '{{Identical|Feedback}}'
     gradeables_none: Message indicating that the course has no gradeable items in
       the timeline (Wiki Ed only)
     instructor:
@@ -460,6 +477,9 @@ qqq:
         only)
       link: Link to begin course survey (Wiki Ed only)
   courses_generic:
+    all_courses: |-
+      Button to view the list of all courses. Uses alternative word for generic courses.
+      {{Identical|Programs}}
     archived: |-
       The alternative wording for generic courses.
       {{Identical|Archived Programs}}
@@ -477,6 +497,8 @@ qqq:
       course_school: Label for the "Institution" input field of a program, which is
         for the name of the institution — such as a university or Wikimedia chapter
         — that the program is associated with.
+      course_term: '{{Identical|When}}'
+      course_term_placeholder: '{{Identical|When}}'
       course_title: Label for the name of a course or program
       create_button: Button to submit a new program
       create_label: Label for creating a new program
@@ -484,6 +506,7 @@ qqq:
       create_short: Short version of link to start a new program
       find: Button to find an existing program
       intro: Explanation of how to use the program creation form
+      save_cloned_course: '{{Identical|Save}}'
     explore: |-
       The alternative wording for generic courses.
       {{Identical|Find programs}}

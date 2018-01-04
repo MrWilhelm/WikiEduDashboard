@@ -4,6 +4,7 @@
 # Author: Jon Harald Søby
 # Author: Jon Harald Søby (WMNO)
 # Author: Kingu
+# Author: Pmt
 # Author: Tarjeimo
 ---
 nb:
@@ -13,11 +14,14 @@ nb:
   application:
     cancel: Avbryt
     dashboard: Wiki Ed-dashbord
+    documentation: Dokumentasjon
     error: 'En feil oppsto:'
     explore: Utforsk
     field_required: Dette feltet er obligatorisk
     field_invalid_characters: Dette feltet har ugyldige tegn
     field_invalid_date: Dette feltet krever en dato på formatet ÅÅÅÅ-MM-DD
+    field_invalid_date_time: Slutten må være etter begynnelsen. (Timetallet går fra
+      0 til 23.)
     greeting2: Velkommen!
     greeting_extended: Velkommen til Wikipedia
     greeting: Hallo!
@@ -28,6 +32,7 @@ nb:
     log_out: Logg ut
     my_dashboard: Min oversikt
     recent_activity: Nylig aktivitet
+    report_problem: Rapporter et problem
     search: still et spørsmål
     sign_up_extended: Registrer deg med Wikipedia
     sign_up_log_in_extended: med Wikipedia
@@ -45,8 +50,8 @@ nb:
       du alltids kan endre tidslinja til å passe dine behov.
     explore_course_pages: Utforsk kurssidene
     explore_examples: Utforsk eksempler
-    join_note: Når du har mottatt en passkode fra instruktøren din, klikk på «Finn
-      ditt kurs» for å finne og bli med i det.
+    join_note: Når du har mottatt en påmeldingskode fra instruktøren din, klikk på
+      «Finn ditt kurs» for å finne og bli med i det.
     no_courses_instructor: Det ser ut som du ikke har noen kurs.
     no_courses_student: Det ser ut som du ikke har blitt med i noen kurs ennå.
     opt_out: Spør om å hoppe over orienteringen
@@ -59,7 +64,7 @@ nb:
     explore: Utforsk
     log_in: Logg inn med Wikipedia
     sign_up: Registrer deg med Wikipedia
-    sign_up_help: For å bruke dashbordet må du logg inn med Wikipedia og gi dashbordet
+    sign_up_help: For å bruke dashbordet må du logge inn med Wikipedia og gi dashbordet
       tilgang til kontoen din. Du kan logge inn med en eksisterende Wikipedia-konto,
       eller opprette en ny.
   activity:
@@ -72,6 +77,7 @@ nb:
     assigned_to: Tildelt til
     character_doc: Summen av antall tegn som er lagt til i artikler av innmeldte brukere
       mellom start- og sluttdatoene.
+    deleted: (slettet)
     edited: Artikler redigert
     edited_by: 'Redigert av:'
     edited_mobile: Artikler
@@ -81,6 +87,9 @@ nb:
     new: (ny)
     none: Dette kurset har ikke redigert noen artikler.
     rating: Klasse
+    rating_doc: Rangeringen en artikkel har blitt gitt av underprosjekter på Wikipedia.
+      Disse rangeringene korresponderer ofte til mye eldre versjoner av artikkelen,
+      så de er bare en grov indikator på artikkelens nåværende form.
     rating_docs:
       fa: Utmerket artikkel – Wikipedias høyeste rating, troligvis for vanskelig å
         oppnå til å være en ny brukers hovedprosjekt
@@ -105,6 +114,8 @@ nb:
     view_doc: Summen av alle artikkelvisninger i løpet av prosjektet
     view_on_wiki: Vis på wikien
     views_added: La til %{count} nye visninger for %{title}
+    edit_size: Redigeringsstørrelse
+    wiki: Wiki
     wp10: Strukturell fullstendighet
     wp10_doc: Skåren for «Strukturell fullstendighet» representerer hvor nært artikkelen
       passer med formen til en moden Wikipedia-artikkel, basert på den maskinlæringsbaserte
@@ -115,12 +126,14 @@ nb:
       men tar ikke hensyn til selve innholdet. (Disse skårene er kun tilgjengelige
       for artikler på Wikipedia på engelsk.)
   assignments:
-    article: Artikkelen %{title} ble tildelt
+    article: Artikkelen %{title} ble tildelt deg.
     already_exists: Denne tildelingen finnes fra før!
+    title_too_large: Tittelen bør ikke være lengre enn 255 tegn
     assignees: Tildelt til
     assign_other: Tildel en artikkel
     add_available: Legg til en tilgjengelig artikkel
     assign_self: Tildel meg selv en artikkel
+    assign_tooltip: En tildelt artikkel er en du planlegger å opprette eller forbedre.
     confirm_add_available: Er du sikker på at du vil legge til %{title}?
     confirm_addition: Er du sikker på at du vil tildele %{username} %{title}?
     confirm_deletion: Er du sikker på at du vil slette denne artikkeltildelingen?
@@ -164,10 +177,16 @@ nb:
     organizers: Arrangører
     organizer_added: '%{user} er nå arrangør av kampanjen «%{title}»'
     organizer_removed: '%{user} har blitt fjernet som arrangør av kampanjen «%{title}»'
+    program_template: Programmal
+    program_template_tooltip: Når en arrangør oppretter et program i denne kampanjen
+      vil teksten i dette feltet kopieres over som beskrivelse på programsiden
     title: Tittel
     use_start_end_dates: Bruk start- og sluttdatoer
+  chat:
+    label: Chat
   courses:
     activity: Aktivitet
+    active_courses: Aktive %{course_type}
     all_courses: Alle kurs
     already_enrolled: Du er allerede del av «%{title}»!
     already_exists: Dette finnes allerede for dette kurset!
@@ -188,16 +207,21 @@ nb:
     character_doc: Summen av tegn lagt til i artikler i hovednavnerommet av kursets
       studenter i løpet av kursterminen
     campaigns: 'Kohorter:'
+    campaign_courses: '%{title}-kurs'
+    campaign_articles: '%{title}-artikler'
+    campaign_users: '%{title}-bidragsytere'
     confirm_course_deletion: Er du sikker på at du vil slette kurset med navn %{title}?
       Hvis du er det, skriv inn kursets tittel for å fortsette.
     confirm_course_deletion_failed: «%{title}» er ikke tittelen til dette kurset.
       Kurset har ikke blitt slettet.
+    course: Kurs
     course_dates_calendar_instructions: Velg datoer for å legge dem til eller fjerne
       dem fra kalenderen (f.eks. ferier, ingen skole). Klikk datoet for å bytte mellom
       uvalgt status, valgt status og feriestatus. Datoene for kursaktiviteter vil
       endres for å ta hensyn til uker uten oppsatte møter.
     course_description: Kurs
     courses: Kurs
+    courses_taught: Kurs undervist
     creation_date: Opprettelsesdato
     creator:
       already_exists: Dette kurset finnes allerede. Vurder om du vil forandre navnet,
@@ -207,6 +231,7 @@ nb:
       assignment_start: Oppgavestart
       assignment_start_placeholder: Oppgavestart (ÅÅÅÅ-MM-DD)
       checking_for_uniqueness: Dette kurset sjekkes for unikhet.
+      choose_clone: Velg et kurs å klone.
       clone_previous: Klon tidligere kurs
       clone_this: Klon dette kurset
       cloned_course_calendar_instructions: Velg datoer for å legge dem til eller fjerne
@@ -238,17 +263,41 @@ nb:
         Alt annet kan redigeres senere. Klikk «Opprett kurset mitt!» for å begynne
         å bygge tidslinjen for din Wikipedia-oppgave.
       no_class_holidays: Jeg har ingen klasseferier
+      role_description: Din rolle i kurset
+      role_description_placeholder: Instruktør, stud.ass., etc.
       save_cloned_course: Lagre nytt kurs
       start_date: Startdato
       start_date_placeholder: Startdato (ÅÅÅÅ-MM-DD)
       subject: Emne
+      update_scheduled: Oppdatering planlagt. Dataene vil bli oppdatert sammen med
+        alle gjeldende programmer under neste oppdateringssyklus. Dette tar ofte flere
+        timer.
     current: Nåværende kurs
+    data_articles: Artikkeldata
+    data_download_info: Last ned data i CSV-format.
+    data_overview: Oversiktsdata
+    data_overview_info: Oversiktsdata gir kumulativ statistikk for hele prosjektet.
+    data_edits: Redigeringsdata
+    data_edits_info: Redigeringsdata viser detaljer for hver redigering gjort i løpet
+      av prosjektet.
+    data_students: Bidragsyterdata
+    data_students_info: Bidragsyterdata lister opp alle påmeldte bidragsytere, hvor
+      mye de har redigert, og hvorvidt de registrerte kontoene sine i løpet av prosjektet.
+    data_uploads: Commons-opplastingsdata
+    data_uploads_info: Commons-opplastingsdata viser navnet og bruksinformasjon for
+      hver medieopplasting.
     delete_course: Slett kurs
+    delete_suggestion: Slett
+    delete_course_instructions: Du kan slette denne siden om alle kampanjer fjernes
+      først.
     dismiss_survey: Avvis
     dismiss_survey_confirm: Er du sikker på at du vil avvise denne undersøkelsen permanent?
+    download_stats_data: Last ned statistikk
     duration: Kursvarighet
     edit_course_dates: Rediger kursdatoer
+    enable_chat: Slå på chat
     end: Slutt
+    ended: Kurset er avsluttet.
     enroll: Meld deg på
     enrollment: Påmelding
     error:
@@ -256,19 +305,28 @@ nb:
         termin.
       user_exists: Beklager, %{username} er ikke en eksisterende bruker.
       invalid_language_or_project: Ugyldig språk/prosjekt
+      duplicate_slug: Et annet program med navn %{slug} finnes allerede.
     expected_students: Forventede studenter
+    features_feedback: 'Automatiske forslag:'
+    feedback: Tilbakemelding
+    feedback_loading: Vent mens forslagene laster …
     gradeables_none: Dette kurset har ingen oppgaver som kan karaktersettes.
     instructor:
       one: Instruktør
       other: Instruktører
     instructors: Instruktører
     invitation: Du har blitt invitert til å bli med i %{title}. For å bli med i kurset
-      må du logge inn med en Wikipedia-konto. Om du ikke har en Wikipedia-konto ennå,
-      registrer deg nå.
+      må du logge inn med en Wikipedia-konto.
+    invitation_username_advice: Om du ikke har en Wikipedia-konto ennå, registrer
+      deg nå. Brukernavnet ditt kan være så anonymt – eller personlig – som du ønsker.
+      (Delte kontoer tillates ikke.)
     join: Bli med
     join_course: Bli med i kurs
     join_prompt: Bli med i «%{title}»?
     join_successful: Du har blitt med i %{title}.
+    join_failure_details:
+      cannot_join_twice: Brukere kan ikke bli med i samme kurs to ganger.
+      not_yet_approved: Dette kurset er ennå ikke åpnet for innskriving.
     leave_confirmation: Er du sikker på at du vil forlate dette kurset?
     leave_course: Forlat kurs
     loading: Laster ...
@@ -277,15 +335,16 @@ nb:
     needs_update: Planlegg dataoppdatering
     new_week: Legg til ny uke
     nocourses: Du deltar ikke i noen kurs.
+    nocourse: har ikke deltatt i noen kurs.
     none: Ingen
     notify_untrained_confirmation: Dette vil poste en påminnelse på diskusjonssidene
       til alle studenter som har gått over fristen for å fullføre tildelte treningsmoduler.
       Er du sikker på at du vil gjøre det?
     no_available_actions: Ingen tilgjengelige handlinger
-    overview: Oversikt
-    passcode: Passkode
-    passcode_none: Ingen passkode
-    passcode_prompt: Skriv inn passkoden du fikk fra instruktøren din i dette kurset
+    overview: Hjem
+    passcode: Påmeldingskode
+    passcode_none: Ingen påmeldingskode
+    passcode_prompt: 'Skriv inn påmeldingskoden for å melde deg på:'
     published: 'Kurset ditt har blitt publisert! Studenter kan føre seg inn i kurset
       ved å besøke følgende URL:'
     review_timeline: Gå gjennom denne tidslinja og gjør forandringer. Når du er fornøyd,
@@ -295,6 +354,7 @@ nb:
     revisions_doc: Antall redigeringer de siste %{timeframe} dagene
     revisions_none: Dette kurset har ingen nylig redigeringsaktivitet på Wikipedia.
     school: Skole
+    school_and_term: Institusjon/termin
     start: Start
     start_typing: Begynn å skrive
     students: Studenter
@@ -308,10 +368,18 @@ nb:
     submitted_heading: Innsendte kurs
     submitted_note: Kurset ditt har blitt sendt inn. Wiki Ed-ansatte vil gå gjennom
       det og kontakte deg med eventuelle spørsmål.
+    suggestions_feedback: Har du noen forslag for å forbedre denne funksjonen? La
+      oss høre dem!
+    suggestions_sending: Sender tilbakemelding …
+    suggestions_sent: Tilbakemelding sendt. Takk!
+    suggestions_failed: Kunne ikke sende tilbakemelding. Prøv igjen senere.
     user_role: Rolle
     course_details: Kursdetaljer
+    subject: Emne
+    submitted: Sendt
     term: Termin
     timeline: Oppgavedetaljer
+    timeline_enabled: Tidslinje slått på
     timeline_link: Tidslinje
     time_zone_message: Start- og sluttider vises i din lokale tidssone.
     title: Tittel
@@ -324,6 +392,8 @@ nb:
     untrained: Utrent
     uploads_none: Denne klassen har ikke bidratt med bilder eller andre mediefiler
       på Wikimedia Commons.
+    user_suggestions: 'Brukerforslag:'
+    user_suggestions_prompt: Forslagene dine til bidragsyterne til artikkelen
     view_other: Vis andre prosjekter
     view: Vis kurs
     view_doc: Summen av alle visninger på artikler redigert av påmeldte bidragsytere
@@ -345,42 +415,61 @@ nb:
       notification_message: Ta en undersøkelse om dette kurset.
       link: Ta undersøkelse
   courses_generic:
+    all_courses: Alle programmer
+    archived: Arkiverte programmer
     articles_none: Det er ingen redigerte artikler for dette prosjektet ennå.
     assignment_end: Tidslinjeslutt
     assignments_none: Dette prosjektet har ingen tildelte artikler
     assignment_start: Tidslinjestart
     cancel: Avbryt
+    course: Program
     courses: Programmer
     campaigns: 'Kampanjer:'
+    campaign_courses: '%{title}-programmer'
     creator:
       checking_for_uniqueness: Dette programmet sjekkes for unikhet
+      choose_clone: Velg et program å klone.
       clone_previous: Klon tidligere program
       clone_this: Klon dette programmet
+      clone_successful: Programmet ble klonet
+      clone_successful_details: Programmet ditt har blitt klonet. Klikk på «Lagre»
+        nedenfor for å fullføre.
+      course_when: Legg til noe i feltet «Når» (for eksempel måned og årstall) for
+        å skille den fra originalen.
       course_description: Programbeskrivelse
       course_school: Institusjon
+      course_term: Når
+      course_term_placeholder: Når
       course_title: Programtittel
       create_button: Opprett programmet mitt!
       create_label: Opprett nytt program
-      create_new: Opprett et nytt program
+      create_new: Opprett et uavhengig program
       create_short: Opprett program
       find: Finn program
       intro: Programtittelen er oblgatorisk, alt annet kan fylles inn sener. Klikk
         «Opprett mitt program!» for å begynne å bygge siden for ditt wikiprogram.
+      participate_in_campaign: Delta i en kampanje
+      save_cloned_course: Lagre
     delete_course: Slett program
     edit_course_dates: Rediger prosjektdatoer
+    explore: Finn programmer
     enroll: Legg til bidragsyter
     enrollment: Deltakelse
     expected_students: Forventede bidragsytere
     instructors: Tilretteleggere
     join_course: Bli med i program
+    join_details: For å bli med i dette programmet må du få påmeldingskoden – eller
+      ei lenke som inkluderer påmeldingskoden – fra arrangøren.
     leave_course: Forlat program
     milestones_none: Dette prosjektet har for tiden ingen milepæler.
     published: 'Dette prosjektet har blitt publisert! Bidragsytere kan melde seg på
       ved å besøke følgende URL:'
     revisions_none: Dette prosjektet har ingen nylig redigeringsaktivitet.
     school: Institusjon
+    school_and_term: Institusjon/når
     student_editors: Bidragsytere
     students: Bidragsytere
+    students_taught: Totalt antall bidragsytere
     students_none: Dette prosjektet har ingen påmeldte bidragsytere.
     students_short: Bidragsytere
     students_count: Antall deltakere
@@ -391,13 +480,19 @@ nb:
     view_page: Vis programside
     word_count_doc: Et estimat for antall ord lagt til i artikler av programmets bidragsytere
       i løpet av programterminen
+    yourcourses: Dine programmer
   editable:
     edit: Rediger
     cancel: Avbryt
     save: Lagre
     edit_description: Rediger beskrivelse
     edit_details: Rediger detaljer
+    edit_template: Rediger mal
+    rename_confirmation: Kursfeltene som danner URL-en har blitt endret. Dette vil
+      endre URL-en og gjøre at eksisterende lenker ikke fungerer. Er du sikker på
+      at du ønsker å gjøre dette?
   metrics:
+    last_update: Siste oppdatering
     activity: Nylig aktivitet
     are_trained: er ajour med treningen
     articles_created: Artikler opprettet
@@ -410,6 +505,7 @@ nb:
     edit_count_description: Totalt antall endringer
     per_user: '%{number}/bruker'
     revisions: Nylige redigeringer
+    tags: Tagger
     upload_count: Commons-opplastinger
     uploads_in_use_count:
       one: fil brukt i en artikkel
@@ -418,6 +514,7 @@ nb:
       one: total bruk på tvers av språk
       other: total bruk på tvers av språk
     view_count_description: Artikkelvisninger
+    view_data_unavailable: Ingen visningsdata tilgjengelig
     view: Visninger
     word_count: Ord lagt til
     word_count_average: Gjennomsnittlig antall ord
@@ -455,12 +552,19 @@ nb:
     diff: forskjell
     diff_show: Vis
     diff_hide: Skjul
+    edit_time_span: Redigeringer skjedde fra %{first_time} til %{last_time}
     edited_by: Redigert av
+    edited_on: Ble redigert %{edit_date}
     loading: Laster revisjoner ...
     none: Dette kurset har ingen nylig redigeringsaktivitet.
     time_doc: Tiden for hver revisjon i din lokale tid
     title: Tittel
     view_on_wiki: Vis diff på wiki
+    see_more: Se mer
+  suggestions:
+    editing: Redigeringsforslag
+    suggestion_docs:
+      does_not_exist: Denne artikkelen finnes ikke på Wikipedia.
   tasks:
     conseq: Jobben %{task} kjører allerede!
     constant: Jobben %{task} kan ikke kjøres mens jobben update_daily kjører.
@@ -491,7 +595,12 @@ nb:
       Er du sikker på at du vil slette denne uka? Dette vil slette uka og alle tilknyttede blokker.
 
       Dette kan ikke omgjøres.
+    delete_weeks_confirmation: |-
+      Er du sikker på at du vil slette denne tidslinja og starte på nytt?
+
+      Dette kan ikke gjøres om.
     discard_all_changes: Se bort fra alle endringer
+    delete_timeline_and_start_over: Slett tidslinje
     due_default: Frist neste uke
     empty_week_1: For å komme i gang,
     empty_week_2: begynn å redigere denne uka
@@ -544,11 +653,12 @@ nb:
       som har økt sidestørrelsen. Dette tallet gjenspeiler ikke nødvendigvis hvor
       mye nytt innhold brukeren har lagt til. Å gjenopprette fjernet innhold vil også
       øke denne summen.
-    chars_added: Tegn lagt til<br />(hovednavnerom | brukernavnerom)
+    chars_added: Tegn lagt til<br />(hovednavnerom | brukernavnerom | kladdnavnerom)
     contributions: Brukerbidrag
     contributions_history_full: Vis full bidragshistorikk på Wikipedia
     contributions_more: Vis flere bidrag
-    course_passcode: 'Passkode:'
+    contribution_statistics: Bidragsstatistikk
+    course_passcode: 'Påmeldingskode:'
     editors: Bidragsytere
     enroll_confirmation: Er du sikker på at du vil legge til %{username}?
     enroll_url: 'Brukere kan bli med ved å besøke denne URL-en:'
@@ -556,6 +666,9 @@ nb:
     first_name: Fornavn
     last_name: Etternavn
     loading: Laster brukere ...
+    characters_added_mainspace: 'Hn.: tegn lagt til'
+    characters_added_short: 'Hn.: %{mainspace}, Bn. %{userspace}'
+    characters_added_userspace: 'Bn.: tegn lagt til'
     my_assigned: 'Tildelt:'
     my_reviewing: 'Anmelder:'
     name: Navn
@@ -574,15 +687,34 @@ nb:
     training_complete:
       one: er ajour med treningen
       other: er ajour med treningen
+    training_complete_count:
+      one: '%{count} ajour med trening'
+      other: '%{count} ajour med trening'
+    training_incomplete: Ikke ajour med trening
+    training_modules_completed:
+      one: '%{completed_count}/%{count} treningsmodul fullført'
+      other: '%{completed_count}/%{count} treningsmoduler fullført'
     training_module_name: Treningsmodul
     training_module_status: Status
+    up_to_date_with_training: ajour med trening
     username: Brukernavn
     username_placeholder: Brukernavn
     role:
+      description: Rolle i kurset
       visitor: Besøkende
       student: Student
       instructor: Instruktør
       wiki_ed_staff: Wiki Ed-ansatte
+  user_profiles:
+    disclaimer: Informasjonen du oppgir vil bli gjort offentlig.
+    bio_placeholder: Legg til biografi (valgfritt)
+    location_placeholder: Legg til sted (valgfritt)
+    institution_placeholder: Institusjonsnavn (valgfritt)
+  wiki_edits:
+    notify_overdue:
+      confirm: Dette vil poste en påminnelse på diskusjonssiden til alle studenter
+        som ikke har fullført øvelsene. Er du sikker på at du vil gjøre dette?
+      summary: ikke ajour med treningen
   wizard:
     assignment_dates: Oppgavedatoer
     assignment_type: Oppgavetype
@@ -596,6 +728,9 @@ nb:
       other: Velg %{count} eller flere alternativer.
     read_less: Les mindre
     read_more: Les mer
+    review_selections: Gå gjennom valgene dine nedenfor. Klikk for å redigere et valg.
+      Trykk på «Send» når du er ferdig for å fullføre veiviseren og bygge tidslinja
+      di.
     select_assignment: Velg hva slags oppgave du vil legge til i tidslinja di.
     summary: Sammendrag
   error:
@@ -615,10 +750,12 @@ nb:
     explanation: Du er ikke autorisert til å utføre denne forespørselen. Om du tror
       du har fått denne beskjeden ved en feil, kontakt dashbordets vedlikeholdere
       for å la dem vite om feilen.
+    json_explanation: Det ser ut som om du har blitt logget ut. Oppdater siden, logg
+      inn og prøv igjen.
   error_incorrect_passcode:
-    header: Gal passkode. :-(
-    explanation: Passkoden for påmelding til dette kurset er feil. Spør en instruktør
-      om den nåværende passkoden for å melde deg på dette kurset.
+    header: Feil påmeldingskode. :-(
+    explanation: Påmeldingskoden til dette kurset er feil. Spør en instruktør om den
+      gjeldende påmeldingskoden for å melde deg på dette kurset.
   error_404:
     header: Side ikke funnet. :-(
     explanation: Denne siden finnes ikke. Om du prøvde å nå dashbordet for et kurs
@@ -653,4 +790,10 @@ nb:
       closing: Med vennlig hilsen,
       signed: – Wiki Ed-teamet
       link: Ta undersøkelsen
+    follow_up:
+      message: Dette er en påminnelse om undersøkelsen for kurset ditt, %{course_title}.
+        Tilbakemeldinger fra denne undersøkelsen hjelper oss å forbedre støtten vår
+        til Wikipedia-oppgaver som den du har gjort.
+  feedback_form_responses:
+    no_responses: Ingen tilbakemeldinger ennå.
 ...

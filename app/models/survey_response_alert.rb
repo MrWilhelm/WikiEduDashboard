@@ -16,6 +16,7 @@
 #  target_user_id :integer
 #  subject_id     :integer
 #  resolved       :boolean          default(FALSE)
+#  details        :text(65535)
 #
 
 # Alert for a course that has become moderately active in mainspace, intended for
@@ -23,10 +24,20 @@
 # Similar to ProductiveCourseAlert, but with a different productivity threshold
 class SurveyResponseAlert < Alert
   def main_subject
-    user.username
+    "#{question_text_excerpt} - #{user.username}"
   end
 
   def url
     user_profile_url
+  end
+
+  private
+
+  def question_text_excerpt
+    question.question_text[0..100]
+  end
+
+  def question
+    Rapidfire::Question.find subject_id
   end
 end

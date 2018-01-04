@@ -3,6 +3,8 @@
 
 import McFly from 'mcfly';
 const Flux = new McFly();
+import _ from 'lodash';
+
 import CourseStore from './course_store.js';
 import ServerActions from '../actions/server_actions.js';
 
@@ -16,7 +18,7 @@ const _notifications = [];
 //----------------------------------------
 
 const addNotification = function (notification) {
-  _notifications.push(notification);
+  _notifications.push({ store: 'flux', ...notification });
 };
 
 const removeNotification = function (notification) {

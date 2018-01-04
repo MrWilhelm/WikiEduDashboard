@@ -15,27 +15,31 @@
         %select.sorts{rel: 'courses'}
           %option{rel: 'asc', value: 'title'}
             = t("courses.title")
+          %option{rel: 'asc', value: 'school'}
+            = t("courses.school")
           %option{rel: 'desc', value: 'revisions'}
             = t("metrics.revisions")
           %option{rel: 'desc', value: 'characters'}
             = t("metrics.word_count")
           %option{rel: 'desc', value: 'average-words'}
-            = t("metrics.average_word_count")
+            = t("metrics.word_count_average")
           %option{rel: 'desc', value: 'views'}
             = t("metrics.view")
           %option{rel: 'desc', value: 'students'}
             = t("users.editors")
           %option{rel: 'desc', value: 'creation-date'}
             = t("courses.creation_date")
-          - unless Features.disable_training?
-            %option{rel: 'desc', value: 'untrained'}
-              = t("courses.untrained")
+          %option{rel: 'desc', value: 'untrained'}
+            = t("courses.untrained")
 
     %table.table.table--hoverable.table--sortable
       %thead
         %tr
           %th.sort.sortable.asc{'data-default-order' => 'asc', 'data-sort' => 'title'}
             = t("#{@presenter.course_string_prefix}.courses")
+            %span.sortable-indicator
+          %th.sort.sortable{style: 'width: 200px;', 'data-default-order' => 'asc', 'data-sort' => 'school'}
+            = t("#{@presenter.course_string_prefix}.school_and_term")
             %span.sortable-indicator
           %th.sort.sortable{style: 'width: 165px;', 'data-default-order' => 'desc', 'data-sort' => 'revisions'}
             .tooltip-trigger
@@ -65,5 +69,10 @@
             %th{style: 'width:100px'}
               = t('courses.actions')
       %tbody.list
-        - @presenter.courses_by_recent_edits.each do |c|
-          = render 'courses/row', course: c, admin: false, user: false
+        - if @search_terms.present?
+          %h4= t('application.search_results', search_terms: @search_terms)
+          - @presenter.search_courses(@search_terms).each do |c|
+            = render 'campaigns/course_row', course: c, admin: false, user: false
+        - else
+          - @presenter.courses_by_recent_edits.each do |c|
+            = render 'campaigns/course_row', course: c, admin: false, user: false

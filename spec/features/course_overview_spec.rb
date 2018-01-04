@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe 'course overview page', type: :feature, js: true do
@@ -67,7 +68,7 @@ describe 'course overview page', type: :feature, js: true do
         expect(page).to have_content('(Wed, Sat)')
       end
       within '.week-index' do
-        expect(page).to have_content 'Week 1'
+        expect(page).to have_content(/Week \d+/)
       end
     end
   end

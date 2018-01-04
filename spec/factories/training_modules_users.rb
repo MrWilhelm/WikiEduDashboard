@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: training_modules_users
@@ -10,7 +11,7 @@
 #  completed_at         :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :training_modules_users do
   end
 end

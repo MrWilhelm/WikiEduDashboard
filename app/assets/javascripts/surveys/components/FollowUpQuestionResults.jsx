@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import TextResults from './TextResults.jsx';
 
 export default class FollowUpQuestionResults extends Component {
@@ -25,6 +26,5 @@ export default class FollowUpQuestionResults extends Component {
 
 FollowUpQuestionResults.propTypes = {
   follow_up_answers: PropTypes.array,
-  question: PropTypes.object,
   type: PropTypes.string
 };

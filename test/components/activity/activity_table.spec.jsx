@@ -1,7 +1,7 @@
 import '../../testHelper';
 
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 import ActivityTable from '../../../app/assets/javascripts/components/activity/activity_table.jsx';
 import { click } from '../../customUtils.js';
@@ -44,6 +44,7 @@ describe('ActivityTable', () => {
     const TestTable = ReactTestUtils.renderIntoDocument(
       <div>
         <ActivityTable
+          store={reduxStore}
           loading={true}
         />
       </div>
@@ -57,6 +58,7 @@ describe('ActivityTable', () => {
     const TestTable = ReactTestUtils.renderIntoDocument(
       <div>
         <ActivityTable
+          store={reduxStore}
           loading={false}
           activity={activities}
           headers={headers}
@@ -72,6 +74,7 @@ describe('ActivityTable', () => {
     const TestTable = ReactTestUtils.renderIntoDocument(
       <div>
         <ActivityTable
+          store={reduxStore}
           loading={false}
           activity={activities}
           headers={headers}
@@ -87,6 +90,7 @@ describe('ActivityTable', () => {
     const TestTable = ReactTestUtils.renderIntoDocument(
       <div>
         <ActivityTable
+          store={reduxStore}
           loading={false}
           activity={[]}
           headers={headers}
@@ -103,6 +107,7 @@ describe('ActivityTable', () => {
     const TestTable = ReactTestUtils.renderIntoDocument(
       <div>
         <ActivityTable
+          store={reduxStore}
           loading={false}
           activity={activities}
           headers={headers}

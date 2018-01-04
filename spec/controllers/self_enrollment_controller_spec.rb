@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe SelfEnrollmentController do
@@ -31,6 +32,7 @@ describe SelfEnrollmentController do
       context 'when the course is approved' do
         before do
           course.campaigns << Campaign.first
+          stub_add_user_to_channel_success
         end
 
         context 'when the user is not enrolled yet' do
@@ -75,6 +77,7 @@ describe SelfEnrollmentController do
             end
 
             it 'enrolls user (and redirects) and updates the user count' do
+              stub_oauth_edit
               get 'enroll_self', params: request_params
               expect(subject).to eq(302)
               expect(course.students.count).to eq(1)

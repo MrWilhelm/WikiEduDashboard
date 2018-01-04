@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/data_cycle/batch_update_logging"
+require "#{Rails.root}/lib/importers/user_importer"
 require "#{Rails.root}/lib/importers/assigned_article_importer"
 require "#{Rails.root}/lib/articles_courses_cleaner"
 require "#{Rails.root}/lib/importers/rating_importer"
 require "#{Rails.root}/lib/article_status_manager"
-require "#{Rails.root}/lib/importers/view_importer"
 require "#{Rails.root}/lib/importers/upload_importer"
-require "#{Rails.root}/lib/data_cycle/cache_updater"
+require "#{Rails.root}/lib/importers/ores_scores_before_and_after_importer"
 
 # Executes all the steps of 'update_constantly' data import task
 class DailyUpdate
@@ -15,24 +16,21 @@ class DailyUpdate
   def initialize
     setup_logger
     return if updates_paused?
-    return if daily_update_running?
-    wait_until_constant_update_finishes if constant_update_running?
+    return if update_running?(:daily)
+    wait_until_constant_update_finishes if update_running?(:constant)
 
-    begin
-      create_pid_file
-      run_update
-    ensure
-      delete_pid_file
-    end
+    run_update_with_pid_files(:daily)
   end
 
   private
 
   def run_update
-    log_start_of_update
+    log_start_of_update 'Daily update tasks are beginning.'
+    update_users
     update_commons_uploads
     update_article_data
-    update_article_views unless ENV['no_views'] == 'true'
+    update_category_data
+    push_course_data_to_salesforce if Features.wiki_ed?
     log_end_of_update 'Daily update finished.'
   # rubocop:disable Lint/RescueException
   rescue Exception => e
@@ -45,19 +43,23 @@ class DailyUpdate
   # Data import #
   ###############
 
+  def update_users
+    log_message 'Updating registration dates for new Users'
+    UserImporter.update_users
+  end
+
   def update_commons_uploads
     log_message 'Identifying deleted Commons uploads'
     UploadImporter.find_deleted_files(CommonsUpload.where(deleted: false))
 
     log_message 'Updating Commons uploads for current students'
-    UploadImporter.import_all_uploads(User.current.role('student'))
+    UploadImporter.import_uploads_for_current_users
 
     log_message 'Updating Commons uploads usage counts'
     UploadImporter.update_usage_count_by_course(Course.all)
 
     log_message 'Getting thumbnail urls for Commons uploads'
-    thumbless_uploads = CommonsUpload.where(thumburl: nil, deleted: false)
-    UploadImporter.import_urls_in_batches(thumbless_uploads)
+    UploadImporter.import_all_missing_urls
   end
 
   def update_article_data
@@ -72,11 +74,24 @@ class DailyUpdate
 
     log_message 'Updating article namespace and deleted status'
     ArticleStatusManager.update_article_status
+
+    log_message 'Updating wp10 scores for before and after edits'
+    OresScoresBeforeAndAfterImporter.import_all
   end
 
-  def update_article_views
-    log_message 'Updating article views'
-    ViewImporter.update_all_views(true)
+  def update_category_data
+    log_message 'Updating tracked categories'
+    Category.refresh_categories_for(Course.current)
+  end
+
+  ###############
+  # Data export #
+  ###############
+  def push_course_data_to_salesforce
+    log_message 'Pushing course data to Salesforce'
+    Course.current.each do |course|
+      PushCourseToSalesforce.new(course) if course.flags[:salesforce_id]
+    end
   end
 
   #################################
@@ -87,27 +102,14 @@ class DailyUpdate
     sleep_time = 0
     log_message 'Delaying daily until current update finishes...'
     begin
-      File.open(SLEEP_FILE, 'w') { |f| f.puts Process.pid }
-      while constant_update_running?
+      create_pid_file(:sleep)
+      while update_running?(:constant)
         sleep_time += 5
         sleep(5.minutes)
       end
       log_message "Starting daily update after waiting #{sleep_time} minutes"
     ensure
-      File.delete SLEEP_FILE if File.exist? SLEEP_FILE
+      delete_pid_file(:sleep)
     end
-  end
-
-  def create_pid_file
-    File.open(DAILY_UPDATE_PID_FILE, 'w') { |f| f.puts Process.pid }
-  end
-
-  def delete_pid_file
-    File.delete DAILY_UPDATE_PID_FILE if File.exist? DAILY_UPDATE_PID_FILE
-  end
-
-  def log_start_of_update
-    @start_time = Time.zone.now
-    Rails.logger.info 'Daily update tasks are beginning.'
   end
 end

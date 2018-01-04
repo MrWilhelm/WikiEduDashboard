@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require 'uri'
 
 # Controller for ask.wikiedu.org search form
 class AskController < ApplicationController
-  ASK_ROOT = 'http://ask.wikiedu.org/questions/scope:all/sort:activity-desc/'
+  ASK_ROOT = 'https://ask.wikiedu.org/questions/scope:all/sort:relevance-desc/'
 
   def search
     if params[:q].blank?

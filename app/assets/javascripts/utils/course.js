@@ -1,4 +1,4 @@
-const List = window.List;
+const { List } = window;
 $(() => {
   // Find tables with rows with data-link attribute, then make them clickable
   $('tr[data-link]').on('click', e => {
@@ -21,7 +21,7 @@ $(() => {
     courseList = new List('courses', {
       page: 500,
       valueNames: [
-        'title', 'revisions', 'characters', 'average-words', 'views', 'students', 'creation-date', 'untrained'
+        'title', 'school', 'revisions', 'characters', 'average-words', 'views', 'students', 'creation-date', 'untrained'
       ]
     });
   }
@@ -34,6 +34,18 @@ $(() => {
       page: 500,
       valueNames: [
         'title', 'num-courses', 'articles-created', 'characters', 'views', 'students', 'creation-date'
+      ]
+    });
+  }
+
+  // Article sorting
+  // only sort if there are tables to sort
+  let articlesList;
+  if ($('#campaign-articles table').length) {
+    articlesList = new List('campaign-articles', {
+      page: 10000,
+      valueNames: [
+        'title', 'views', 'char_added', 'lang_project'
       ]
     });
   }
@@ -54,6 +66,7 @@ $(() => {
       switch ($(this).attr('rel')) {
         case 'courses': return courseList;
         case 'campaigns': return campaignList;
+        case 'campaign-articles': return articlesList;
         default: break;
       } })();
     if (list) {

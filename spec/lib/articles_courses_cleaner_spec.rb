@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 require "#{Rails.root}/lib/articles_courses_cleaner"
 
@@ -13,7 +14,8 @@ describe ArticlesCoursesCleaner do
       create(:user,
              id: 1)
       create(:user,
-             id: 2)
+             id: 2,
+             username: 'user2')
       # A user who is not a student, so they should not have ArticlesCourses
       create(:courses_user,
              course_id: 1,
@@ -57,6 +59,7 @@ describe ArticlesCoursesCleaner do
              end: Time.zone.today + 1.year)
       create(:course,
              id: 2,
+             slug: 'foo/course2',
              start: 1.month.ago,
              end: Time.zone.today + 1.year)
       create(:revision,

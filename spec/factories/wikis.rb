@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: wikis
@@ -8,7 +9,7 @@
 #  project  :string(16)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :wiki do
   end
 end

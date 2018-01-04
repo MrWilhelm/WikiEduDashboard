@@ -1,10 +1,15 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import InlineUsers from './inline_users.jsx';
 import CampaignButton from './campaign_button.jsx';
 import TagButton from './tag_button.jsx';
 import CourseTypeSelector from './course_type_selector.jsx';
 import SubmittedSelector from './submitted_selector.jsx';
+import TimelineToggle from './timeline_toggle.jsx';
+import CourseLevelSelector from '../course_creator/course_level_selector.jsx';
 
 import Editable from '../high_order/editable.jsx';
 import TextInput from '../common/text_input.jsx';
@@ -15,7 +20,7 @@ import CourseStore from '../../stores/course_store.js';
 import TagStore from '../../stores/tag_store.js';
 import UserStore from '../../stores/user_store.js';
 import CampaignStore from '../../stores/campaign_store.js';
-
+import ValidationStore from '../../stores/validation_store.js';
 import CourseUtils from '../../utils/course_utils.js';
 import CourseDateUtils from '../../utils/course_date_utils.js';
 // For some reason getState is not being triggered when CampaignStore gets updated
@@ -24,30 +29,31 @@ const getState = () =>
   ({
     course: CourseStore.getCourse(),
     campaigns: CampaignStore.getModels(),
-    instructors: UserStore.getFiltered({ role: 1 }),
+    instructors: _.sortBy(UserStore.getFiltered({ role: 1 }), 'enrolled_at'),
     online: UserStore.getFiltered({ role: 2 }),
     campus: UserStore.getFiltered({ role: 3 }),
     staff: UserStore.getFiltered({ role: 4 }),
-    tags: TagStore.getModels()
+    tags: TagStore.getModels(),
+    error_message: ValidationStore.firstMessage()
   })
 ;
 
-const Details = React.createClass({
+const Details = createReactClass({
   displayName: 'Details',
 
   propTypes: {
-    course: React.PropTypes.object,
-    current_user: React.PropTypes.object,
-    instructors: React.PropTypes.array,
-    online: React.PropTypes.array,
-    campus: React.PropTypes.array,
-    staff: React.PropTypes.array,
-    campaigns: React.PropTypes.array,
-    tags: React.PropTypes.array,
-    controls: React.PropTypes.func,
-    editable: React.PropTypes.bool
+    course: PropTypes.object,
+    current_user: PropTypes.object,
+    instructors: PropTypes.array,
+    online: PropTypes.array,
+    campus: PropTypes.array,
+    staff: PropTypes.array,
+    campaigns: PropTypes.array,
+    tags: PropTypes.array,
+    controls: PropTypes.func,
+    editable: PropTypes.bool
   },
-
+  mixins: [ValidationStore.mixin],
   getInitialState() {
     return getState();
   },
@@ -70,7 +76,22 @@ const Details = React.createClass({
     return CourseActions.updateCourse(updatedCourse);
   },
 
+  storeDidChange() {
+    return this.setState({ error_message: ValidationStore.firstMessage() });
+  },
+
+  canRename() {
+    if (!this.props.editable) { return false; }
+    if (this.props.current_user.admin) { return true; }
+    // On the Wiki Ed dashboard, only admins may rename courses.
+    if (Features.wikiEd) { return false; }
+    // On P&E Dashboard, anyone with edit rights for the course may rename it.
+    return true;
+  },
+
   render() {
+    const canRename = this.canRename();
+    const isClassroomProgramType = this.props.course.type === 'ClassroomProgramCourse';
     const instructors = <InlineUsers {...this.props} users={this.props.instructors} role={1} title={CourseUtils.i18n('instructors', this.props.course.string_prefix)} />;
     let online;
     let campus;
@@ -80,29 +101,32 @@ const Details = React.createClass({
       staff = <InlineUsers {...this.props} users={this.props.staff} role={4} title="Wiki Ed Staff" />;
       online = <InlineUsers {...this.props} users={this.props.online} role={2} title="Online Volunteers" />;
       campus = <InlineUsers {...this.props} users={this.props.campus} role={3} title="Campus Volunteers" />;
-      if (this.props.course.school || this.props.current_user.admin) {
-        school = (
-          <TextInput
-            onChange={this.updateSlugPart}
-            value={this.props.course.school}
-            value_key="school"
-            editable={this.props.editable && this.props.current_user.admin}
-            type="text"
-            label={CourseUtils.i18n('school', this.props.course.string_prefix)}
-            required={true}
-          />
-        );
-      }
+    }
+
+    if (this.props.course.school || canRename) {
+      school = (
+        <TextInput
+          onChange={this.updateSlugPart}
+          value={this.props.course.school}
+          value_key="school"
+          validation={CourseUtils.courseSlugRegex()}
+          editable={canRename}
+          type="text"
+          label={CourseUtils.i18n('school', this.props.course.string_prefix)}
+          required={true}
+        />
+      );
     }
 
     let title;
-    if (this.props.editable && this.props.current_user.admin) {
+    if (canRename) {
       title = (
         <TextInput
           onChange={this.updateSlugPart}
           value={this.props.course.title}
           value_key="title"
-          editable={this.props.editable && this.props.current_user.admin}
+          validation={CourseUtils.courseSlugRegex()}
+          editable={canRename}
           type="text"
           label={CourseUtils.i18n('title', this.props.course.string_prefix)}
           required={true}
@@ -111,13 +135,14 @@ const Details = React.createClass({
     }
 
     let term;
-    if (this.props.course.term || this.props.current_user.admin) {
+    if (this.props.course.term || canRename) {
       term = (
         <TextInput
           onChange={this.updateSlugPart}
           value={this.props.course.term}
           value_key="term"
-          editable={this.props.editable && this.props.current_user.admin}
+          validation={CourseUtils.courseSlugRegex()}
+          editable={canRename}
           type="text"
           label={CourseUtils.i18n('term', this.props.course.string_prefix)}
           required={false}
@@ -136,7 +161,7 @@ const Details = React.createClass({
           type="text"
           label={I18n.t('courses.passcode')}
           placeholder={I18n.t('courses.passcode_none')}
-          required={true}
+          required={!!this.props.course.passcode_required}
         />
       );
     }
@@ -158,7 +183,7 @@ const Details = React.createClass({
     const dateProps = CourseDateUtils.dateProps(this.props.course);
     let timelineStart;
     let timelineEnd;
-    if (this.props.course.type === 'ClassroomProgramCourse') {
+    if (isClassroomProgramType) {
       timelineStart = (
         <DatePicker
           onChange={this.updateCourseDates}
@@ -200,15 +225,22 @@ const Details = React.createClass({
     let tags;
     let courseTypeSelector;
     let submittedSelector;
+    let courseLevelSelector;
+    let timelineToggle;
     if (this.props.current_user.admin) {
       const tagsList = this.props.tags.length > 0 ?
         _.map(this.props.tags, 'tag').join(', ')
       : I18n.t('courses.none');
 
       subject = (
-        <div className="subject">
-          <span><strong>Subject:</strong> {this.props.course.subject}</span>
-        </div>
+        <TextInput
+          onChange={this.updateDetails}
+          value={this.props.course.subject}
+          value_key="subject"
+          editable={this.props.editable}
+          type="text"
+          label={I18n.t('courses.subject')}
+        />
       );
       tags = (
         <div className="tags">
@@ -216,14 +248,38 @@ const Details = React.createClass({
           <TagButton {...this.props} show={this.props.editable} />
         </div>
       );
+      submittedSelector = (
+        <SubmittedSelector
+          course={this.props.course}
+          editable={this.props.editable}
+        />
+      );
+    }
+
+    // Users who can rename a course are also allowed to change the type.
+    if (canRename) {
       courseTypeSelector = (
         <CourseTypeSelector
           course={this.props.course}
           editable={this.props.editable}
         />
       );
-      submittedSelector = (
-        <SubmittedSelector
+    }
+
+    // Users who edit a course are also allowed to change the level.
+    if (this.props.editable && isClassroomProgramType) {
+      courseLevelSelector = (
+        <CourseLevelSelector
+          level={this.props.course.level}
+          updateCourse={this.updateDetails}
+        />
+      );
+    }
+
+    // Users who can rename a course are also allowed to toggle the timeline on/off.
+    if (canRename && !isClassroomProgramType) {
+      timelineToggle = (
+        <TimelineToggle
           course={this.props.course}
           editable={this.props.editable}
         />
@@ -241,6 +297,7 @@ const Details = React.createClass({
           {online}
           {campus}
           {staff}
+          <div><p className="red">{this.state.error_message}</p></div>
           {school}
           {title}
           {term}
@@ -274,12 +331,14 @@ const Details = React.createClass({
           </form>
           <div>
             <span><strong>{CourseUtils.i18n('campaigns', this.props.course.string_prefix)} </strong>{campaigns}</span>
-            <CampaignButton {...this.props} show={this.props.editable && this.props.current_user.admin && (this.props.course.submitted || this.props.course.type !== 'ClassroomProgramCourse')} />
+            <CampaignButton {...this.props} show={this.props.editable && canRename && (this.props.course.submitted || !isClassroomProgramType)} />
           </div>
           {subject}
+          {courseLevelSelector}
           {tags}
           {courseTypeSelector}
           {submittedSelector}
+          {timelineToggle}
         </div>
       </div>
     );
@@ -287,4 +346,20 @@ const Details = React.createClass({
 }
 );
 
-export default Editable(Details, [CourseStore, UserStore, CampaignStore, TagStore], CourseActions.persistCourse, getState, I18n.t('editable.edit_details'));
+const redirectToNewSlug = () => {
+  const newSlug = CourseUtils.generateTempId(CourseStore.getCourse());
+  window.location = `/courses/${newSlug}`;
+};
+
+// If the course has been renamed, we first warn the user that this is happening.
+const saveCourseDetails = (data, courseId = null) => {
+  if (!CourseStore.isRenamed()) {
+    return CourseActions.persistCourse(data, courseId);
+  }
+  if (confirm(I18n.t('editable.rename_confirmation'))) {
+    CourseUtils.cleanupCourseSlugComponents(data.course);
+    return CourseActions.persistAndRedirectCourse(data, courseId, redirectToNewSlug);
+  }
+};
+
+export default Editable(Details, [CourseStore, UserStore, CampaignStore, TagStore], saveCourseDetails, getState, I18n.t('editable.edit_details'));

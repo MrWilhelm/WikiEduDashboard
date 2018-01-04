@@ -1,12 +1,12 @@
 import '../../testHelper';
 import sinon from 'sinon';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import StudentList from '../../../app/assets/javascripts/components/students/student_list.jsx';
 import ServerActions from '../../../app/assets/javascripts/actions/server_actions.js';
 
 describe('StudentList', () => {
-  const currentUser = { id: 1, admin: true, role: 1 };
+  const currentUser = { id: 1, admin: true, role: 1, isNonstudent: true };
   const users = [{
     role: 0,
     id: 3,
@@ -40,9 +40,11 @@ describe('StudentList', () => {
     const studentList = ReactTestUtils.renderIntoDocument(
       <div>
         <StudentList
+          store={reduxStore}
           params={params}
           users={users}
           course={course}
+          course_id="Couse_school/Test_Course_(Couse_term)"
           editable={true}
           current_user ={currentUser}
           assignments={assignments}
@@ -58,7 +60,16 @@ describe('StudentList', () => {
     const notifyOverdue = sinon.spy(ServerActions, 'notifyOverdue');
 
     const studentList = ReactTestUtils.renderIntoDocument(
-      <StudentList params={params} editable={true} users={users} course={course} current_user ={currentUser} assignments={assignments} />
+      <StudentList
+        store={reduxStore}
+        params={params}
+        editable={true}
+        users={users}
+        course={course}
+        course_id="Couse_school/Test_Course_(Couse_term)"
+        current_user={currentUser}
+        assignments={assignments}
+      />
     );
     studentList.setState({ users: users });
     studentList.setState({ assignments: assignments });

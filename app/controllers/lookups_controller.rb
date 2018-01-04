@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #= Controller for user functionality
 class LookupsController < ApplicationController
   include CourseHelper
@@ -10,7 +11,7 @@ class LookupsController < ApplicationController
   def campaign
     @model = 'campaign'
     @key = 'title'
-    @values = Campaign.all.pluck(:title)
+    @values = Campaign.all.order(created_at: :desc).pluck(:title)
     render 'index'
   end
 

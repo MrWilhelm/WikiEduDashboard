@@ -1,12 +1,16 @@
 # Messages for Arabic (العربية)
 # Exported from translatewiki.net
 # Export driver: phpyaml
+# Author: ASHmed
 # Author: Ayatun
 # Author: Haytham morsy
 # Author: Maroen1990
+# Author: Mido
 # Author: Moud hosny
 # Author: Shbib Al-Subaie
+# Author: Youssef
 # Author: ديفيد
+# Author: علاء
 # Author: محمد أحمد عبد الفتاح
 ---
 ar:
@@ -20,6 +24,7 @@ ar:
     explore: استكشف
     field_invalid_characters: هذا الحقل به أحرف غير صالحة
     field_invalid_date: يتطلب هذا الحقل تاريخ بالشكل YYYY-MM-DD
+    field_invalid_date_time: يجب أن تكون النهاية بعد البداية. (الساعات من 0 إلى 23.)
     greeting2: مرحبا!
     greeting_extended: مرحبا بكم في ويكيبيديا
     greeting: أهلاّ بك!
@@ -30,6 +35,7 @@ ar:
     log_out: تسجيل الخروج
     my_dashboard: لوحتي
     recent_activity: النشاطات الحديثة
+    report_problem: أبلغ عن مشكلة
     search: طرح سؤال
     sign_up_extended: تسجيل الدخول إلى ويكيبيديا
     sign_up_log_in_extended: مع ويكبيديا
@@ -37,6 +43,7 @@ ar:
     submit: إرسال
     training: تدريب
     change: تغيير
+    details: التفاصيل
   dashboard:
     create_note: انقر فوق إنشاء ملعب لإنشاء الدورة الأولى الخاصة بك.
     explore_course_pages: استكشاف صفحات الدورات
@@ -88,10 +95,13 @@ ar:
     show_cumulative_changes: أظهر التغييرات التراكمية
     title: العنوان
     title_example: عنوان المقال
+    tools: أدوات التقييم
     view: عرض المقالة
     view_all: عرض الكل
     view_doc: مجموع وجهات النظر حول كل مقالة من خلال المشروع
     views_added: أضيفت %{count} وجهات نظر جديدة ل %{title}
+    edit_size: تعديل الحجم
+    wiki: ويكي
     wp10: اكتمال هيكلي
   assignments:
     already_exists: هذه المهمة موجودة بالفعل!
@@ -112,11 +122,25 @@ ar:
       title: معالم
   campaign:
     add_organizer: أضف منظمًا
+    campaigns: الحملات
     campaign_deleted: أزيلت حملة "%{title}"
     campaign_updated: تم تجديد الحملة
     none: لا شيء
     organizers: المنظمون
     title: العنوان
+  categories:
+    add_category: أضف تصنيفًا
+    add_template: أضف القالب
+    add_this_category: أضف هذا التصنيف
+    add_this_template: أضف هذا القالب
+    confirm_template_addition: هل أنت متأكد من أنك تريد تتبع المساهمات في قالب "%{name}"؟
+    depth: عمق التصنيف الفرعي
+    name: الاسم
+    category_name: اسم التصنيف
+    template_name: اسم القالب
+    tracked_categories: التصنيفات والقوالب المتابعة
+  chat:
+    label: دردشة
   courses:
     activity: النشاط
     already_enrolled: أنت بالفعل جزء من '%{title}'!
@@ -131,9 +155,13 @@ ar:
       legend_class_meeting: اجتماع فئة
       legend_class_not_meeting: لا يوجد اجتماع مقرر
       select_meeting_days: تحديد أيام الأسبوع التي يجتمع فيها صفك.
+    campaigns: 'الحملات:'
+    campaign_articles: مقالات %{title}
+    campaign_users: محرري %{title}
     confirm_course_deletion: هل أنت متأكد أنك تريد حذف الدورة بعنوان %{title}؟ إذا
       كان الأمر كذلك، اكتب عنوان الدورة للقيام بذلك.
     confirm_course_deletion_failed: '"%{title}" ليس عنوا هذه الدورة. لم يتم حذفه الدورة.'
+    course: دورة
     courses: الدورات
     creation_date: تاريخ الإنشاء
     creator:
@@ -162,6 +190,7 @@ ar:
       expected_number: عدد الطلاب المتوقع
       find: البحث عن دراستك
       no_class_holidays: ليست لدي عطل
+      role_description: دورك في المساق
       save_cloned_course: حفظ دورة جديدة
       start_date: تاريخ البدء
       start_date_placeholder: تاريخ البدء (YYYY-MM-DD)
@@ -170,6 +199,8 @@ ar:
     dismiss_survey_confirm: هل أنت متأكد أنك تريد رفض هذا المسح بشكل دائم؟
     duration: مدة الدورة
     edit_course_dates: تواريخ دورة التحرير
+    enable_chat: تفعيل الدردشة
+    end: نهاية
     enrollment: تسجيل
     error:
       user_exists: عذرا، %{username} ليس مستخدما موجودا.
@@ -186,7 +217,8 @@ ar:
     new_week: إضافة أسبوع جديد
     nocourses: إنك لم تشارك في أي دورة.
     no_available_actions: لا توجد إجراءات متاحة
-    overview: نظرة عامة
+    overview: الرئيسية
+    passcode: رمز المرور
     passcode_none: لا يوجد رمز مرور
     passcode_prompt: أدخل رمز المرور المعطى لك من قبل معلمك لهذه الدورة
     published: 'قد تم نشر دورتك! يمكن للطلاب التسجيل في الدورة من خلال زيارة الرابط
@@ -194,6 +226,7 @@ ar:
     revisions_doc: عدد عمليات التحرير في %{timeframe} يوما الماضية
     revisions_none: هذه الدورة ليس لها نشاط في تحرير ويكيبيديا مؤخرا.
     school: مدرسة
+    start: البداية
     start_typing: ابدأ الطباعة
     students: الطلاب
     student_editors: الطلاب المحررون
@@ -232,22 +265,27 @@ ar:
     assignment_end: نهاية الجدول الزمني
     assignments_none: هذه الدورة ليست بها مقالات معينة.
     assignment_start: بداية الجدول الزمني
+    course: برنامج
     creator:
       checking_for_uniqueness: يتم التحقق من هذا البرنامج من حيث التفرد.
       clone_previous: استنساخ برنامج سابق
       clone_this: استنساخ هذا البرنامج
       course_description: وصف البرنامج
       course_school: المؤسسة
+      course_term: متى
+      course_term_placeholder: متى
       course_title: اسم البرنامج
       create_button: أنشأ برنامجي!
       create_label: أنشئ برنامج جديد
-      create_new: انشئ برنامج جديد
+      create_new: انشئ برنامج مستقل
       create_short: أنشئ البرنامج
       find: البحث عن برنامج
       intro: مطلوب عنوان البرنامج، كل شيء يمكن ملؤه في وقت لاحق. انقر فوق "إنشاء برنامجي!"
         لبدء إنشاء صفحة لبرنامج الويكي الخاص بك.
+      save_cloned_course: احفظ
     delete_course: حذف برنامج
     edit_course_dates: عدل مواعيد المشروع
+    explore: البحث عن برنامج
     enroll: إضافة محرر
     enrollment: مشاركة
     expected_students: المحررون المتوقعون
@@ -269,6 +307,7 @@ ar:
     edit_description: عدل الوصف
     edit_details: عدل التفاصيل
   metrics:
+    label: نشاط المساق
     activity: آخر نشاط
     articles_created: المقالات التي تم إنشاؤها
     articles_edited: المقالات التي تم تعديلها
@@ -323,6 +362,7 @@ ar:
     time_doc: وقت كل مراجعة في وقتك المحلي
     title: عنوان
     view_on_wiki: عرض الفرق على الويكي
+    see_more: طالع المزيد
   tasks:
     conseq: المهمة %{task} قيد التشغيل بالفعل!
     paused: المهمة %{task} لا يمكن تشغيلها لأنه قد تم إيقاف التحديثات المجدولة. شغِّل

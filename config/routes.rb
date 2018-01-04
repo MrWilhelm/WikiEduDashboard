@@ -19,6 +19,14 @@ Rails.application.routes.draw do
                           as: :true_destroy_user_session
   end
 
+  #UserProfilesController
+  controller :user_profiles do
+    get 'users/:username' => 'user_profiles#show' , constraints: { username: /.*/ }
+    get 'user_stats' => 'user_profiles#stats'
+    get 'stats_graphs' => 'user_profiles#stats_graphs'
+    post 'users/update/:username' => 'user_profiles#update'
+  end
+
   # Users
   resources :users, only: [:index, :show], param: :username, constraints: { username: /.*/ } do
     collection do
@@ -26,7 +34,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :assignments
+  resources :assignments do
+    resources :assignment_suggestions
+  end
 
   get 'mass_enrollment/:course_id'  => 'mass_enrollment#index',
       constraints: { course_id: /.*/ }
@@ -34,7 +44,7 @@ Rails.application.routes.draw do
       constraints: { course_id: /.*/ }
 
   # Self-enrollment: joining a course by entering a passcode or visiting a url
-  get 'courses/:course_id/enroll/:passcode' => 'self_enrollment#enroll_self',
+  get 'courses/:course_id/enroll/(:passcode)' => 'self_enrollment#enroll_self',
       constraints: { course_id: /.*/ }
 
   # Courses
@@ -48,6 +58,8 @@ Rails.application.routes.draw do
         :as => :notify_untrained, constraints: { id: /.*/ }
     get 'courses/*id/needs_update' =>  'courses#needs_update',
         :as => :needs_update, constraints: { id: /.*/ }
+    get 'courses/*id/ores_plot' =>  'ores_plot#course_plot',
+        constraints: { id: /.*/ }
     get 'courses/*id/check' => 'courses#check',
         :as => :check, constraints: { id: /.*/ }
     match 'courses/*id/campaign' => 'courses#list',
@@ -65,7 +77,15 @@ Rails.application.routes.draw do
         }
     post 'clone_course/:id' => 'course_clone#clone'
     post 'courses/:id/update_syllabus' => 'courses#update_syllabus'
+    delete 'courses/:id/delete_all_weeks' => 'courses#delete_all_weeks',
+      constraints: {
+        id: /.*/
+      }
   end
+
+  # Categories
+  post 'categories' => 'categories#add_category'
+  delete 'categories' => 'categories#remove_category'
 
   get 'lookups/campaign(.:format)' => 'lookups#campaign'
   get 'lookups/tag(.:format)' => 'lookups#tag'
@@ -81,6 +101,10 @@ Rails.application.routes.draw do
   resources :gradeables, collection: { update_multiple: :put }
   post 'courses/:course_id/timeline' => 'timeline#update_timeline',
        constraints: { course_id: /.*/ }
+  post 'courses/:course_id/enable_timeline' => 'timeline#enable_timeline',
+       constraints: { course_id: /.*/ }
+  post 'courses/:course_id/disable_timeline' => 'timeline#disable_timeline',
+       constraints: { course_id: /.*/ }
 
   get 'revisions' => 'revisions#index'
 
@@ -90,9 +114,12 @@ Rails.application.routes.draw do
   resources :courses_users, only: [:index]
   resources :alerts, only: [:create] do
     member do
+      get 'resolve'
       put 'resolve'
     end
   end
+
+  put 'greeting' => 'greeting#greet_course_students'
 
   # Article Finder
   if Features.enable_article_finder?
@@ -103,15 +130,26 @@ Rails.application.routes.draw do
   # Reports and analytics
   get 'analytics(/*any)' => 'analytics#index'
   post 'analytics(/*any)' => 'analytics#results'
+  get 'usage' => 'analytics#usage'
+  get 'ungreeted' => 'analytics#ungreeted'
+  get 'course_csv' => 'analytics#course_csv'
+  get 'course_edits_csv' => 'analytics#course_edits_csv'
+  get 'course_uploads_csv' => 'analytics#course_uploads_csv'
+  get 'course_students_csv' => 'analytics#course_students_csv'
+  get 'course_articles_csv' => 'analytics#course_articles_csv'
 
   # Campaigns
   resources :campaigns, param: :slug, except: :show do
     member do
       get 'overview'
       get 'programs'
+      get 'articles'
+      get 'users'
       get 'students'
       get 'instructors'
       get 'courses'
+      get 'ores_plot'
+      get 'articles_csv'
       put 'add_organizer'
       put 'remove_organizer'
       put 'remove_course'
@@ -121,6 +159,10 @@ Rails.application.routes.draw do
       controller: :campaigns,
       action: :show
   get 'campaigns/:slug', to: redirect('campaigns/%{slug}/programs')
+  get 'campaigns/:slug/programs/:courses_query',
+      controller: :campaigns,
+      action: :programs,
+      to: 'campaigns/%{slug}/programs?courses_query=%{courses_query}'
 
   # Recent Activity
   get 'recent-activity/plagiarism/report' => 'recent_activity#plagiarism_report'
@@ -142,9 +184,7 @@ Rails.application.routes.draw do
 
 
   # Revision Feedback
-  if Features.enable_revision_feedback?
-    get 'revision_feedback/:rev_id' => 'revision_feedback#index'
-  end
+  get '/revision_feedback' => 'revision_feedback#index'
 
   # Wizard
   get 'wizards' => 'wizard#wizard_index'
@@ -157,6 +197,7 @@ Rails.application.routes.draw do
   get 'training/:library_id' => 'training#show', as: :training_library
   get 'training/:library_id/:module_id' => 'training#training_module', as: :training_module
   post 'training_modules_users' => 'training_modules_users#create_or_update'
+  get 'reload_trainings' => 'training#reload'
 
   get 'training_status' => 'training_status#show'
 
@@ -189,7 +230,6 @@ Rails.application.routes.draw do
   get '/surveys/results' => 'surveys#results_index', as: 'results'
   resources :survey_assignments, path: 'surveys/assignments'
   post '/survey_assignments/:id/send_test_email' => 'survey_assignments#send_test_email', as: 'send_test_email'
-  post '/surveys/clone/:id' => 'surveys#clone'
   put '/surveys/question_position' => 'questions#update_position'
   get '/survey/results/:id' => 'surveys#results', as: 'survey_results'
   get '/survey/question/results/:id' => 'questions#results', as: 'question_results'
@@ -211,6 +251,7 @@ Rails.application.routes.draw do
 
   # Update Locale Preference
   post '/update_locale/:locale' => 'users#update_locale', as: :update_locale
+  get '/update_locale/:locale' => 'users#update_locale'
 
   # Route aliases for React frontend
   get '/course_creator(/*any)' => 'dashboard#index', as: :course_creator
@@ -220,6 +261,26 @@ Rails.application.routes.draw do
   get '/feedback_form_responses/:id' => 'feedback_form_responses#show', as: :feedback_form_response
   post '/feedback_form_responses' => 'feedback_form_responses#create'
   get '/feedback/confirmation' => 'feedback_form_responses#confirmation'
+
+  # Chat
+  if Features.enable_chat?
+    get '/chat/login' => 'chat#login'
+    put '/chat/enable_for_course/:course_id' => 'chat#enable_for_course'
+  end
+
+  # Salesforce
+  if Features.wiki_ed?
+    put '/salesforce/link/:course_id' => 'salesforce#link'
+    put '/salesforce/update/:course_id' => 'salesforce#update'
+    get '/salesforce/create_media' => 'salesforce#create_media'
+  end
+
+  # Experiments
+  namespace :experiments do
+    get 'fall2017_cmu_experiment/:course_id/:email_code/opt_in' => 'fall2017_cmu_experiment#opt_in'
+    get 'fall2017_cmu_experiment/:course_id/:email_code/opt_out' => 'fall2017_cmu_experiment#opt_out'
+    get 'fall2017_cmu_experiment/course_list' => 'fall2017_cmu_experiment#course_list'
+  end
 
   resources :admin
   resources :alerts_list

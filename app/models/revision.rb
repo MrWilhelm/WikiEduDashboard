@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: revisions
@@ -28,7 +29,6 @@ class Revision < ActiveRecord::Base
   belongs_to :user
   belongs_to :article
   belongs_to :wiki
-  scope :after_date, ->(date) { where('date > ?', date) }
   scope :live, -> { where(deleted: false) }
   scope :user, -> { where(system: false) }
 
@@ -51,13 +51,8 @@ class Revision < ActiveRecord::Base
   # https://en.wikipedia.org/w/index.php?title=Eva_Hesse&diff=prev&oldid=655980945
   def url
     return if article.nil?
-    title = escaped_full_title(article)
+    title = article.escaped_full_title
     "#{wiki.base_url}/w/index.php?title=#{title}&diff=prev&oldid=#{mw_rev_id}"
-  end
-
-  def update(data={}, save=true)
-    self.attributes = data
-    self.save if save
   end
 
   # Returns all of the revision author's courses where the revision occured

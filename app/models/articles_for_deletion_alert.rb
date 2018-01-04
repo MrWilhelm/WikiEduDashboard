@@ -16,6 +16,7 @@
 #  target_user_id :integer
 #  subject_id     :integer
 #  resolved       :boolean          default(FALSE)
+#  details        :text(65535)
 #
 
 # Alert for when an article has been nominated for deletion on English Wikipedia
@@ -25,7 +26,7 @@ class ArticlesForDeletionAlert < Alert
   end
 
   def url
-    article_url(article)
+    article.url
   end
 
   def resolvable?

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: surveys
@@ -15,7 +16,7 @@
 #  optout               :text(65535)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :survey, class: 'Survey' do
     name 'My Survey'
   end

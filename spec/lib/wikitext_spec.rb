@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 require "#{Rails.root}/lib/wikitext"
 
@@ -45,6 +46,16 @@ describe Wikitext do
       expect(response).to include 'ur1(.)ca/bar'
       expect(response).not_to include 'bit.ly/foo'
       expect(response).not_to include 'ur1.ca/bar'
+    end
+  end
+
+  describe '.titles_to_wikilinks' do
+    it 'converts an array of titles into wikilink format' do
+      titles = ['Selfie', 'Category:Photography', 'Bishnu_Priya']
+      output = subject.titles_to_wikilinks(titles)
+      expect(output).to include('[[Selfie]],')
+      expect(output).to include('[[:Category:Photography]]')
+      expect(output).to include('[[Bishnu Priya]]')
     end
   end
 end

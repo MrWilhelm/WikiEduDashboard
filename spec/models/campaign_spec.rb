@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: campaigns
@@ -46,6 +47,7 @@ describe Campaign do
     it { should have_many(:campaigns_users) }
     it { should have_many(:question_group_conditionals) }
     it { should have_many(:rapidfire_question_groups).through(:question_group_conditionals) }
+    it { should have_many(:articles_courses) }
   end
 
   describe 'active campaign' do
@@ -81,7 +83,7 @@ describe Campaign do
     it 'handles non-ascii campaign titles' do
       title = 'Карыстальнік Група Беларусь 2016'
       campaign = Campaign.create(title: title)
-      expect(campaign.slug).to eq('Карыстальнік_Група_Беларусь_2016')
+      expect(campaign.slug).to eq('карыстальнік_група_беларусь_2016')
     end
   end
 

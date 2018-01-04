@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/wiki_course_edits"
 require "#{Rails.root}/lib/importers/user_importer"
 require "#{Rails.root}/app/workers/remove_assignment_worker"
@@ -57,28 +58,12 @@ class UsersController < ApplicationController
   def index
     @users = if params[:email].present?
                User.search_by_email(params[:email])
+             elsif params[:real_name].present?
+               User.search_by_real_name(params[:real_name])
              else
                User.instructor.limit(20)
                    .order(created_at: :desc)
              end
-  end
-
-  ####################################################
-  # Page for showing course info for particular user #
-  ####################################################
-  def show
-    # Per MediaWiki convention, underscores in username urls represent spaces
-    username = params[:username].tr('_', ' ')
-    @user = User.find_by_username(username)
-    if @user
-      @courses_users = @user.courses_users
-      @courses_list = @user.courses.where('courses_users.role = ?', CoursesUsers::Roles::INSTRUCTOR_ROLE)
-      @courses_presenter = CoursesPresenter.new(current_user: current_user, courses_list: @courses_list)
-      @individual_stats_presenter = IndividualStatisticsPresenter.new(user: @user)
-    else
-      flash[:notice] = 'User not found'
-      redirect_to controller: 'dashboard', action: 'index'
-    end
   end
 
   private
@@ -89,10 +74,16 @@ class UsersController < ApplicationController
   def add
     set_course_and_user
     ensure_user_exists { return }
-    @result = JoinCourse.new(course: @course, user: @user, role: enroll_params[:role]).result
+    set_real_name
+    @result = JoinCourse.new(course: @course,
+                             user: @user,
+                             role: enroll_params[:role],
+                             role_description: enroll_params[:role_description],
+                             real_name: @real_name).result
     ensure_enrollment_success { return }
 
-    UpdateCourseWorker.schedule_edits(course: @course, editing_user: current_user)
+    alert_staff_if_new_instructor_was_added
+    update_course_page_and_assignment_talk_templates
     make_enrollment_edits
     render 'users', formats: :json
   end
@@ -105,6 +96,27 @@ class UsersController < ApplicationController
     yield
   end
 
+  # Users may have their real name set, if they went through /onboarding.
+  # However, these real names are not public information; they are used primarily
+  # so that people in a class together can see both names and usernames.
+  # This method sets the real name that is associated with the CoursesUsers
+  # enrollment record, but only if the adding user is allowed to know it.
+  def set_real_name
+    @real_name = enroll_params[:real_name]
+    # On P&E Dashboard, real name is not set except via self-enrollment
+    # or via explicitly submitted params.
+    return unless Features.wiki_ed?
+    # On Wiki Education Dashboard, if the course is approved, we allow the
+    # instructors to add users and still include the real name.
+    return unless adding_self? || current_user.admin? || @course.approved?
+
+    @real_name ||= @user.real_name
+  end
+
+  def adding_self?
+    current_user.id == @user.id
+  end
+
   def ensure_enrollment_success
     return unless @result[:failure]
     render json: { message: @result[:failure] }, status: 404
@@ -112,10 +124,26 @@ class UsersController < ApplicationController
   end
 
   def make_enrollment_edits
-    return unless enroll_params[:role].to_i == CoursesUsers::Roles::STUDENT_ROLE
+    return unless student_role?
     # for students only, posts templates to userpage and sandbox
-    WikiCourseEdits.new(action: :enroll_in_course, course: @course,
-                        current_user: current_user, enrolling_user: @user)
+    EnrollInCourseWorker.schedule_edits(course: @course,
+                                        editing_user: current_user,
+                                        enrolling_user: @user)
+  end
+
+  def alert_staff_if_new_instructor_was_added
+    return unless instructor_role?
+    NewInstructorEnrollmentMailer.send_staff_alert(adder: current_user,
+                                                   new_instructor: @user,
+                                                   course: @course)
+  end
+
+  def instructor_role?
+    enroll_params[:role].to_i == CoursesUsers::Roles::INSTRUCTOR_ROLE
+  end
+
+  def student_role?
+    enroll_params[:role].to_i == CoursesUsers::Roles::STUDENT_ROLE
   end
 
   ###################
@@ -124,7 +152,6 @@ class UsersController < ApplicationController
   def remove
     set_course_and_user
     return if @user.nil?
-
     @course_user = CoursesUsers.find_by(user_id: @user.id,
                                         course_id: @course.id,
                                         role: enroll_params[:role])
@@ -134,7 +161,7 @@ class UsersController < ApplicationController
     @course_user.destroy # destroying the course_user also destroys associated Assignments.
 
     render 'users', formats: :json
-    UpdateCourseWorker.schedule_edits(course: @course, editing_user: current_user)
+    update_course_page_and_assignment_talk_templates
   end
 
   # If the user has Assignments, update article talk pages to remove them from
@@ -142,7 +169,9 @@ class UsersController < ApplicationController
   def remove_assignment_templates
     assignments = @course_user.assignments
     assignments.each do |assignment|
-      RemoveAssignmentWorker.schedule_edits(course: @course, editing_user: current_user, assignment: assignment)
+      RemoveAssignmentWorker.schedule_edits(course: @course,
+                                            editing_user: current_user,
+                                            assignment: assignment)
     end
   end
 
@@ -161,10 +190,17 @@ class UsersController < ApplicationController
   def find_or_import_user_by_username
     username = enroll_params[:username]
     @user = User.find_by(username: username)
-    @user = UserImporter.new_from_username(username) if @user.nil?
+    @user = UserImporter.new_from_username(username, @course.home_wiki) if @user.nil?
   end
 
   def enroll_params
-    params.require(:user).permit(:user_id, :username, :role)
+    params.require(:user).permit(:user_id, :username, :role, :real_name, :role_description)
+  end
+
+  ##################
+  # Helper methods #
+  ##################
+  def update_course_page_and_assignment_talk_templates
+    UpdateCourseWorker.schedule_edits(course: @course, editing_user: current_user)
   end
 end

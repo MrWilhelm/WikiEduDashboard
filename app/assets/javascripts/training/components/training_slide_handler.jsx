@@ -1,5 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import { browserHistory } from 'react-router';
+import _ from 'lodash';
+
 import TrainingStore from '../stores/training_store.js';
 import TrainingActions from '../actions/training_actions.js';
 import ServerActions from '../../actions/server_actions.js';
@@ -11,11 +15,11 @@ const md = require('../../utils/markdown_it.js').default({ openLinksExternally: 
 
 const getState = () => TrainingStore.getState();
 
-const TrainingSlideHandler = React.createClass({
+const TrainingSlideHandler = createReactClass({
   displayName: 'TrainingSlideHandler',
 
   propTypes: {
-    params: React.PropTypes.object
+    params: PropTypes.object
   },
 
   mixins: [TrainingStore.mixin],
@@ -104,7 +108,6 @@ const TrainingSlideHandler = React.createClass({
     }
     if (e.which === this.keys.rightKey && this.state.nextSlide) {
       if (this.disableNext()) { return; }
-      this.setSlideCompleted(this.props.params.slide_id);
       const params = _.extend(navParams, { slide_id: this.state.nextSlide.slug });
       return browserHistory.push(this.trainingUrl(params));
     }
@@ -115,14 +118,14 @@ const TrainingSlideHandler = React.createClass({
       return (
         <div className="training-loader">
           <h1 className="h2">Loading…</h1>
-          <div className="training-loader__spinner"></div>
+          <div className="training-loader__spinner" />
         </div>
       );
     }
 
     if (this.state.loading === false && !__guard__(this.state.currentSlide, x => x.id)) {
       window.location = '/errors/file_not_found';
-      return <div></div>;
+      return <div />;
     }
 
     let nextLink;
@@ -130,7 +133,7 @@ const TrainingSlideHandler = React.createClass({
       nextLink = (
         <SlideLink
           slideId={this.state.nextSlide.slug}
-          direction="Next"
+          buttonText={this.state.currentSlide.buttonText || "Next Page"}
           disabled={this.disableNext()}
           button={true}
           params={this.props.params}
@@ -142,7 +145,7 @@ const TrainingSlideHandler = React.createClass({
     }
 
     let loginWarning;
-    if (!this.userLoggedIn() && !Features.disableTraining) {
+    if (!this.userLoggedIn()) {
       loginWarning = (
         <div className="training__slide__notification" key="not_logged_in">
           <div className="container">
@@ -163,10 +166,20 @@ const TrainingSlideHandler = React.createClass({
       );
     }
 
+    let slideTitle;
     let rawHtml;
-    if (this.state.currentSlide.content) {
-      rawHtml = md.render(this.state.currentSlide.content);
+    const locale = I18n.locale;
+    if (this.state.currentSlide.translations && this.state.currentSlide.translations[locale]) {
+      slideTitle = this.state.currentSlide.translations[locale].title;
+      rawHtml = md.render(this.state.currentSlide.translations[locale].content);
+    } else {
+      slideTitle = this.state.currentSlide.title;
+      if (this.state.currentSlide.content) {
+        rawHtml = md.render(this.state.currentSlide.content);
+      }
     }
+
+
     const menuClass = this.state.menuIsOpen === false ? 'hidden' : 'shown';
 
     let quiz;
@@ -194,9 +207,9 @@ const TrainingSlideHandler = React.createClass({
         <header>
           <div className="pull-right training__slide__nav" onClick={this.toggleMenuOpen}>
             <div className="pull-right hamburger">
-              <span className="hamburger__bar"></span>
-              <span className="hamburger__bar"></span>
-              <span className="hamburger__bar"></span>
+              <span className="hamburger__bar" />
+              <span className="hamburger__bar" />
+              <span className="hamburger__bar" />
             </div>
             <h3 className="pull-right">
               <a href="" onFocus={this.toggleMenuOpen}>Page {this.state.currentSlide.index} of {this.state.slides.length}</a>
@@ -215,8 +228,8 @@ const TrainingSlideHandler = React.createClass({
         {loginWarning}
         <article className="training__slide">
           {titlePrefix}
-          <h1>{this.state.currentSlide.title}</h1>
-          <div className="markdown training__slide__content" dangerouslySetInnerHTML={{ __html: rawHtml }}></div>
+          <h1>{slideTitle}</h1>
+          <div className="markdown training__slide__content" dangerouslySetInnerHTML={{ __html: rawHtml }} />
           {quiz}
           <footer className="training__slide__footer">
             <span className="pull-left">{previousLink}</span>

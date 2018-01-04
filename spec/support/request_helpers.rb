@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #= Stubs for various requests
 module RequestHelpers
   ##################
@@ -51,6 +52,24 @@ module RequestHelpers
       "info":"The \"templateeditor\" right is required to edit this page",
       "*":"See https://en.wikipedia.org/w/api.php for API usage"}}'
     stub_request(:post, /.*wikipedia.*/)
+      .to_return(status: 200, body: failure, headers: {})
+  end
+
+  def stub_edit_failure_blocked
+    stub_token_request
+    failure = '{"servedby":"mw1135", "error":{"code":"blocked",
+      "info":"You have been blocked from editing.",
+      "*":"See http://en.wikipedia.org/w/api.php for API usage"}}'
+    stub_request(:post, /.*wikipedia*/)
+      .to_return(status: 200, body: failure, headers: {})
+  end
+
+  def stub_edit_failure_autoblocked
+    stub_token_request
+    failure = '{"servedby":"mw1135", "error":{"code":"autoblocked",
+      "info":"Your IP address has been blocked automatically.",
+      "*":"See http://en.wikipedia.org/w/api.php for API usage"}}'
+    stub_request(:post, /.*wikipedia*/)
       .to_return(status: 200, body: failure, headers: {})
   end
 
@@ -118,8 +137,98 @@ module RequestHelpers
       .to_return(status: 200, body: '{}', headers: {})
   end
 
+  def stub_list_users_query
+    stub_request(:get, /.*list=users.*/)
+      .to_return(status: 200, body: '{"users":[{"emailable":""}]}', headers: {})
+  end
+
+  def stub_list_users_query_with_no_email
+    stub_request(:get, /.*list=users.*/)
+      .to_return(status: 200, body: '{"users":[{}]}', headers: {})
+  end
+
+  def stub_wikipedia_503_error
+    stub_request(:get, /.*wikipedia.*/)
+      .to_return(status: 503, body: '{}', headers: {})
+  end
+
   def stub_commons_503_error
     stub_request(:get, /.*commons.wikimedia.org.*/)
       .to_return(status: 503, body: '', headers: {})
+  end
+
+  def stub_wiki_validation
+    wikis = [
+      'incubator.wikimedia.org',
+      'en.wiktionary.org',
+      'es.wiktionary.org',
+      'es.wikipedia.org',
+      'pt.wikipedia.org',
+      'ta.wiktionary.org',
+      'es.wikibooks.org',
+      'ar.wikibooks.org',
+      'en.wikivoyage.org',
+      'wikisource.org',
+      'www.wikidata.org'
+    ]
+
+    wikis.each do |wiki|
+      stub_request(:get, "https://#{wiki}/w/api.php?action=query&format=json&meta=siteinfo")
+        .to_return(status: 200, body: "{\"query\":{\"general\":{\"servername\":\"#{wiki}\"}}}", headers: {})
+    end
+  end
+
+  ###################
+  # Rocket.Chat API #
+  ###################
+  def stub_chat_login_success
+    success_response = {
+      'status' => 'success',
+      'data': {
+        'authToken' => 'fakeAuthToken',
+        'userId' => 'chatIdForUser'
+      }
+    }
+    stub_request(:post, /.*login/)
+      .to_return(status: 200, body: success_response.to_json, headers: {})
+  end
+
+  def stub_chat_user_create_success
+    success_response = {
+      'success' => true,
+      'user': {
+        '_id': 'userId'
+      }
+    }
+    stub_request(:post, /.*users.create/)
+      .to_return(status: 200, body: success_response.to_json, headers: {})
+  end
+
+  def stub_chat_channel_create_success
+    stub_chat_login_success # Admin login happens before channel creation
+    success_response = {
+      'success' => true,
+      'group': {
+        '_id': 'channelId'
+      }
+    }
+    stub_request(:post, /.*groups.create/)
+      .to_return(status: 200, body: success_response.to_json, headers: {})
+  end
+
+  def stub_add_user_to_channel_success
+    # These happen before adding the user, if the user and room don't exist already.
+    stub_chat_user_create_success
+    stub_chat_channel_create_success
+    success_response = {
+      'success' => true
+    }
+    stub_request(:post, /.*groups.invite/)
+      .to_return(status: 200, body: success_response.to_json, headers: {})
+  end
+
+  def stub_chat_error
+    stub_request(:post, %r{.*/api/v1/.*})
+      .to_return(status: 403, body: '{}', headers: {})
   end
 end

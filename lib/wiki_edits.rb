@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/wiki_response"
 
 #= Class for making edits to Wikipedia via OAuth, using a user's credentials
@@ -14,6 +15,7 @@ class WikiEdits
   #######################
   def oauth_credentials_valid?(current_user)
     get_tokens(current_user)
+    current_user.touch
     current_user.wiki_token != 'invalid'
   end
 
@@ -32,14 +34,10 @@ class WikiEdits
     # to Sentry.
     Raven.capture_message 'WikiEdits.notify_untrained',
                           level: 'info',
-                          culprit: 'WikiEdits.notify_untrained',
+                          transaction: 'WikiEdits.notify_untrained',
                           extra: { sender: current_user.username,
                                    course_name: course.slug,
                                    untrained_count: untrained_users.count }
-  end
-
-  def notify_user(sender, recipient, message)
-    add_new_section(sender, recipient.talk_page, message)
   end
 
   ####################

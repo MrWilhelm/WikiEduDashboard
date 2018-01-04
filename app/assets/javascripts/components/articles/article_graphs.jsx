@@ -1,15 +1,16 @@
-/* global vg */
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import OnClickOutside from 'react-onclickoutside';
 import Wp10Graph from './wp10_graph.jsx';
 import EditSizeGraph from './edit_size_graph.jsx';
 import Loading from '../common/loading.jsx';
 
-const ArticleGraphs = React.createClass({
+const ArticleGraphs = createReactClass({
   displayName: 'ArticleGraphs',
 
   propTypes: {
-    article: React.PropTypes.object
+    article: PropTypes.object
   },
 
   getInitialState() {
@@ -61,21 +62,16 @@ const ArticleGraphs = React.createClass({
   },
 
   render() {
-    let style;
-    let button;
+    let style = 'hidden';
+    if (this.state.showGraph) {
+      style = '';
+    }
+
     let graph;
     let editSize;
     let radioInput;
     const graphWidth = 500;
     const graphHeight = 300;
-    if (this.state.showGraph) {
-      style = '';
-      button = <button onClick={this.hideGraph} className="button dark">Hide graph</button>;
-    } else {
-      style = ' hidden';
-      button = <button onClick={this.showGraph} className="button dark">Article Development</button>;
-    }
-
     const className = `vega-graph ${style}`;
 
     if (this.state.articleData != null) {
@@ -148,8 +144,8 @@ const ArticleGraphs = React.createClass({
     }
 
     return (
-      <div>
-        {button}
+      <a onClick={this.showGraph} className="inline">
+        (article development)
         <div className={className}>
           <div className="radio-row">
             {radioInput}
@@ -157,7 +153,7 @@ const ArticleGraphs = React.createClass({
           </div>
           {graph}
         </div>
-      </div>
+      </a>
     );
   }
 });

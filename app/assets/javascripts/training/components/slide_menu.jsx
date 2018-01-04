@@ -1,15 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
+import _ from 'lodash';
 
-const SlideMenu = React.createClass({
+const SlideMenu = createReactClass({
   displayName: 'SlideMenu',
 
   propTypes: {
-    closeMenu: React.PropTypes.func.isRequired,
-    onClick: React.PropTypes.func.isRequired,
-    slides: React.PropTypes.array,
-    currentSlide: React.PropTypes.object,
-    enabledSlides: React.PropTypes.array,
-    menuClass: React.PropTypes.string
+    closeMenu: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
+    slides: PropTypes.array,
+    currentSlide: PropTypes.object,
+    enabledSlides: PropTypes.array,
+    menuClass: PropTypes.string
   },
 
   componentWillMount() {
@@ -32,7 +35,7 @@ const SlideMenu = React.createClass({
   },
 
   render() {
-    if (!this.props.slides) { return <div></div>; }
+    if (!this.props.slides) { return <div />; }
     // need the slide index because overflow: hidden cuts off li numbering
     const slides = this.props.slides.map((slide, loopIndex) => {
       const current = slide.id === this.props.currentSlide.id;

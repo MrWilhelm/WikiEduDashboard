@@ -1,6 +1,6 @@
-dashboard_title: Wiki Education Foundation Dashboard
+dashboard_title: Wiki Education Dashboard
 dashboard_url: dashboard.wikiedu.org
-meta_description: Wiki Education Foundation dashboard for Wikipedia editing projects
+meta_description: Wiki Education dashboard for Wikipedia editing projects
 wiki_language: en
 
 contact_email: 'contact@wikiedu.org'
@@ -31,6 +31,7 @@ campaign_spring_2015: "Wikipedia:Education_program/Dashboard/course_ids"
 campaign_fall_2014: "Wikipedia:Education_program/Dashboard/Fall_2014_course_ids"
 
 default_campaign: "spring_2016"
+edit_en.wikipedia.org: "true"
 update_length: "30"
 cron_log_debug: "true"
 
@@ -39,8 +40,26 @@ favicon_file: favicon.ico"
 favicon_dev_file: "favicon_dev.png"
 
 communications_manager: ''
+classroom_program_manager: 'Helaine (Wiki Ed)'
 technical_help_staff: 'Sage (Wiki Ed)'
 survey_alerts_recipient: 'Samantha (Wiki Ed)'
 
 # disable emails for individual Alert types
 ProductiveCourseAlert_emails_disabled: 'true'
+
+# Rocket.Chat integration
+enable_chat: 'true'
+chat_server: 'https://dashboardchat.wmflabs.org'
+chat_admin_username: <SECRET>
+chat_admin_password: <SECRET>
+
+SALESFORCE_USERNAME: <SECRET>
+SALESFORCE_PASSWORD: <SECRET>
+SALESFORCE_SECURITY_TOKEN: <SECRET>
+SALESFORCE_CLIENT_ID: <SECRET>
+SALESFORCE_CLIENT_SECRET: <SECRET>
+SALESFORCE_API_VERSION: '38.0'
+SF_SERVER: 'https://na24.salesforce.com/'
+SF_CLASSROOM_PROGRAM_ID: <SECRET>
+SF_VISITING_SCHOLARS_PROGRAM_ID: <SECRET>
+bcc_to_salesforce_email: <SECRET>

@@ -27,7 +27,7 @@ illustrate:
             be following as well.
           </p>
           <p>
-            Your course has also been assigned a Wikipedia Content Expert. Check
+            Your course has also been assigned a Wikipedia Expert. Check
             your Talk page for notes from them. You can also reach them through
             the "<strong>Get Help</strong>" button on this page.
           </p>
@@ -35,8 +35,8 @@ illustrate:
             To get started, please review the following handouts:
           </p>
           <ul>
-            <li><a href="http://wikiedu.org/editingwikipedia">Editing Wikipedia</a> pages 1–5</li>
-            <li><a href="http://wikiedu.org/evaluatingwikipedia">Evaluating Wikipedia</a></li>
+            <li><a href="https://wikiedu.org/editingwikipedia">Editing Wikipedia</a> pages 1–5</li>
+            <li><a href="https://wikiedu.org/evaluatingwikipedia">Evaluating Wikipedia</a></li>
           </ul>
 
       - title: Learn the basics
@@ -45,7 +45,12 @@ illustrate:
         training_module_ids: [1,2,6] # Wikipedia essentials, Editing basics, Images and media
         content: |
           <ul>
-            <li>Create an account and join this course page, using the  enrollment link your instructor sent you.</li>
+            <li>
+              Create an account and join this course page, using the  enrollment
+              link your instructor sent you. (To avoid hitting Wikipedia's account
+              creation limits, this is best done outside of class. Only 6 new accounts
+              may be created per day from the same IP address.)
+            </li>
             <li>
               It's time to dive into Wikipedia. Below, you'll find the first set
               of online trainings you'll need to take. New modules will appear
@@ -67,8 +72,8 @@ illustrate:
           <p>You'll want to find or create an appropriate photo, illustration, or piece of video/audio to add to an article.</p>
           <ul>
             <li>
-              Before you start, review the <a href="http://wikiedu.org/illustratingwikipedia">Illustrating Wikipedia</a> handbook,
-              or see <a href="http://wikiedu.org/editingwikipedia">Editing Wikipedia</a> pages 10–11.
+              Before you start, review the <a href="https://wikiedu.org/illustratingwikipedia">Illustrating Wikipedia</a> handbook,
+              or see <a href="https://wikiedu.org/editingwikipedia">Editing Wikipedia</a> pages 10–11.
             </li>
             <li>When you've reviewed those pages, take the training linked below.</li>
             <li>
@@ -78,11 +83,11 @@ illustrate:
               "free stock photo" websites. Instead, you'll want to find images
               with clear proof that the creator has given permission to use their
               work. Many of these images can be found on
-              <a href="http://search.creativecommons.org/">search.creativecommons.org</a>.
+              <a href="https://search.creativecommons.org/">search.creativecommons.org</a>.
             </li>
             <li>
                Don't just upload an image to Wikipedia. Instead, upload it to
                Wikipedia's sister site for images, Wikimedia Commons. For
-               instructions, read through the <a href="http://wikiedu.org/illustratingwikipedia">Illustrating Wikipedia</a> handbook.
+               instructions, read through the <a href="https://wikiedu.org/illustratingwikipedia">Illustrating Wikipedia</a> handbook.
             </li>
           </ul>

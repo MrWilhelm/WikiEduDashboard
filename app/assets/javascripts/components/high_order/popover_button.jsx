@@ -1,4 +1,8 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
 import PopoverExpandable from '../high_order/popover_expandable.jsx';
 import Popover from '../common/popover.jsx';
 import Conditional from '../high_order/conditional.jsx';
@@ -15,13 +19,13 @@ const PopoverButton = function (Key, ValueKey, Store, New, Items, IsSelect = fal
     data[Key][ValueKey] = value;
     return data;
   };
-  const component = React.createClass({
+  const component = createReactClass({
     displayName: `${capitalize(Key)}Button`,
 
     propTypes: {
-      course_id: React.PropTypes.string,
-      is_open: React.PropTypes.bool,
-      open: React.PropTypes.func
+      course_id: PropTypes.string,
+      is_open: PropTypes.bool,
+      open: PropTypes.func
     },
 
     mixins: [Store.mixin],
@@ -64,7 +68,8 @@ const PopoverButton = function (Key, ValueKey, Store, New, Items, IsSelect = fal
       const placeholder = capitalize(Key);
       if (IsSelect) {
         lookup = (
-          <LookupSelect model={Key}
+          <LookupSelect
+            model={Key}
             exclude={this.state.exclude}
             placeholder={placeholder}
             ref="entry"
@@ -73,7 +78,8 @@ const PopoverButton = function (Key, ValueKey, Store, New, Items, IsSelect = fal
         );
       } else {
         lookup = (
-          <Lookup model={Key}
+          <Lookup
+            model={Key}
             exclude={this.state.exclude}
             placeholder={placeholder}
             ref="entry"

@@ -2,9 +2,26 @@
 
 #= Root-level helpers
 module ApplicationHelper
+  def logo_path
+    logo_path = "/assets/images/#{Figaro.env.logo_file}"
+    logo_path
+  end
+
   def logo_tag
     logo_path = "/assets/images/#{Figaro.env.logo_file}"
     image_tag logo_path
+  end
+
+  def permissions
+    if Features.wiki_ed? && current_user&.permissions == User::Permissions::NONE
+      'true'
+    else
+      'false'
+    end
+  end
+
+  def language_switcher_enabled
+    Features.enable_language_switcher?.to_s
   end
 
   def logo_favicon_tag
@@ -52,7 +69,7 @@ module ApplicationHelper
     base_path = request.path.split('/')[1]
     return 'course-page' if base_path == 'courses'
     return 'campaign-path' if base_path == 'campaigns'
-    survey_paths = %w(survey surveys rapidfire)
+    survey_paths = %w[survey surveys rapidfire]
     return 'survey-page' if survey_paths.include?(base_path)
     return 'fixed-nav'
   end

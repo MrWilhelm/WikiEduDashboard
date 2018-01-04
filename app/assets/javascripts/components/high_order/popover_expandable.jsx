@@ -1,4 +1,5 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import UIActions from '../../actions/ui_actions.js';
 import UIStore from '../../stores/ui_store.js';
 import OnClickOutside from 'react-onclickoutside';
@@ -10,7 +11,7 @@ import Conditional from '../high_order/conditional.jsx';
 // for popover buttons and other situations where users would
 // expect a click elsewhere to toggle the state.
 const PopoverExpandable = function (Component) {
-  const component = React.createClass({
+  const component = createReactClass({
     displayName: 'PopoverExpandable',
     mixins: [UIStore.mixin],
 
@@ -35,7 +36,9 @@ const PopoverExpandable = function (Component) {
 
     render() {
       return (
-        <Component {...this.state} {...this.props}
+        <Component
+          {...this.state}
+          {...this.props}
           open={this.open}
           stop={this.stop}
           ref={'component'}

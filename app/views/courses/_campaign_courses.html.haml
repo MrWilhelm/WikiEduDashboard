@@ -11,8 +11,7 @@
         %option{:rel => "desc", :value => "views"}= t("metrics.view")
         %option{:rel => "desc", :value => "students"}= t("users.editors")
         %option{:rel => "desc", :value => "creation-date"}= t("courses.creation_date")
-        - unless Features.disable_training?
-          %option{:rel => "desc", :value => "untrained"}= t("courses.untrained")
+        %option{:rel => "desc", :value => "untrained"}= t("courses.untrained")
   %table.table.table--hoverable.table--sortable
     %thead
       %tr
@@ -51,5 +50,5 @@
       = link_to(t("#{presenter.course_string_prefix}.creator.create_new"), course_creator_path, class: 'button dark')
 
     %a.button{href: programs_campaign_path(presenter.campaign.slug)}
-      = t('courses.all_courses')
+      = t("#{Features.default_course_string_prefix}.all_courses")
       %span.icon.icon-rt_arrow

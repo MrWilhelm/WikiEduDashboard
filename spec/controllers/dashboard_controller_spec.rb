@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe DashboardController do
@@ -33,7 +34,9 @@ describe DashboardController do
 
       it 'sets @blog_posts to empty array' do
         stub_const('DashboardController::BLOG_FEED_URL', 'https://wikiedu.org/not_a_feed')
-        get 'index'
+        VCR.use_cassette 'wikiedu.org/feed' do
+          get 'index'
+        end
         expect(assigns(:blog_posts)).to eq([])
       end
     end

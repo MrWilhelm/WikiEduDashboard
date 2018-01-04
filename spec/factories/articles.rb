@@ -1,15 +1,13 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: articles
 #
 #  id                       :integer          not null, primary key
 #  title                    :string(255)
-#  views                    :integer          default(0)
-#  created_at               :datetime
 #  updated_at               :datetime
-#  character_sum            :integer          default(0)
-#  revision_count           :integer          default(0)
+#  created_at               :datetime
 #  views_updated_at         :date
 #  namespace                :integer
 #  rating                   :string(255)
@@ -22,7 +20,7 @@
 #  mw_page_id               :integer
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :article do
     title 'History_of_biology'
     namespace 0

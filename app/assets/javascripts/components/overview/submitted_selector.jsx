@@ -1,16 +1,18 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import CourseActions from '../../actions/course_actions.js';
-import UUID from 'node-uuid';
+import uuid from 'uuid';
 
-const SubmittedSelector = React.createClass({
+const SubmittedSelector = createReactClass({
   propTypes: {
-    course: React.PropTypes.object,
-    editable: React.PropTypes.bool
+    course: PropTypes.object,
+    editable: PropTypes.bool
   },
 
   componentWillMount() {
     this.setState({
-      id: UUID.v4()
+      id: uuid.v4()
     });
   },
 
@@ -29,13 +31,23 @@ const SubmittedSelector = React.createClass({
     const currentValue = this.props.course.submitted;
     let selector = (
       <span>
-        <strong>Submitted:</strong> {currentValue ? 'yes' : 'no'}
+        <strong>{I18n.t("courses.submitted")}:</strong> {currentValue ? 'yes' : 'no'}
       </span>
     );
     if (this.props.editable) {
       selector = (
         <div className="form-group">
-          <label htmlFor={this.state.id}>Submitted:</label>
+          <span htmlFor={this.state.id}>
+            <strong>{I18n.t("courses.submitted")}:</strong>
+          </span>
+          <div className="tooltip-trigger">
+            <img src ="/assets/images/info.svg" alt = "tooltip default logo" />
+            <div className="tooltip large dark">
+              <p>
+                {I18n.t("courses.course_submitted")}
+              </p>
+            </div>
+          </div>
           <select
             id={this.state.id}
             name="submitted"

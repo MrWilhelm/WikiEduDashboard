@@ -1,14 +1,18 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
 import Gradeable from './gradeable.jsx';
 import BlockStore from '../../stores/block_store.js';
 
-const Grading = React.createClass({
+const Grading = createReactClass({
   displayName: 'Grading',
 
   propTypes: {
-    gradeables: React.PropTypes.array,
-    editable: React.PropTypes.bool,
-    controls: React.PropTypes.func
+    gradeables: PropTypes.array,
+    editable: PropTypes.bool,
+    controls: PropTypes.func
   },
 
   render() {
@@ -41,7 +45,7 @@ const Grading = React.createClass({
 
     return (
       <div className="grading__grading-container">
-        <a name="grading"></a>
+        <a name="grading" />
         <div className="section-header timeline__grading-container">
           <h3>{I18n.t('timeline.grading_header', { total })}</h3>
           {this.props.controls(null, this.props.gradeables.length < 1)}

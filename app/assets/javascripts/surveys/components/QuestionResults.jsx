@@ -1,9 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import BarGraph from './BarGraph.jsx';
 import TextResults from './TextResults.jsx';
 import RangeGraph from './RangeGraph.jsx';
 import FollowUpQuestionResults from './FollowUpQuestionResults.jsx';
-import CopyToClipboard from 'react-copy-to-clipboard';
 
 export default class QuestionResults extends Component {
   _renderQuestionResults(question) {
@@ -24,10 +23,7 @@ export default class QuestionResults extends Component {
   }
 
   _data() {
-    if (process.env.NODE_ENV === 'production') {
-      return null;
-    }
-    return <CopyToClipboard style={{ fontSize: 14 }} text={JSON.stringify(this.props, null, '\t')} onCopy={() => {alert('copied to your clipboard!');}}><span style={{ cursor: 'pointer' }}>Copy JSON</span></CopyToClipboard>;
+    return null;
   }
 
   render() {
@@ -40,7 +36,3 @@ export default class QuestionResults extends Component {
     );
   }
 }
-
-QuestionResults.propTypes = {
-  type: PropTypes.string.isRequired
-};

@@ -1,35 +1,40 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as AlertActions from '../../actions/alert_actions.js';
+
 import Expandable from '../high_order/expandable.jsx';
 import UserStore from '../../stores/user_store.js';
-import AlertsStore from '../../stores/alerts_store.js';
-import AlertActions from '../../actions/alert_actions.js';
 
 const getState = () =>
   ({
     contentExperts: UserStore.getFiltered({ content_expert: true, role: 4 }),
     programManagers: UserStore.getFiltered({ program_manager: true, role: 4 }),
-    staffUsers: UserStore.getFiltered({ role: 4 }),
-    alertSubmitting: AlertsStore.getNeedHelpAlertSubmitting(),
-    alertCreated: AlertsStore.getNeedHelpAlertSubmitted()
+    staffUsers: UserStore.getFiltered({ role: 4 })
   })
 ;
 
-const GetHelpButton = React.createClass({
+const GetHelpButton = createReactClass({
   displayName: 'GetHelpButton',
 
   propTypes: {
-    current_user: React.PropTypes.object,
-    course: React.PropTypes.object,
-    open: React.PropTypes.func,
-    is_open: React.PropTypes.bool
+    currentUser: PropTypes.object,
+    course: PropTypes.object,
+    open: PropTypes.func,
+    is_open: PropTypes.bool,
+    alertSubmitting: PropTypes.bool,
+    alertCreated: PropTypes.bool,
+    actions: PropTypes.object
   },
 
-  mixins: [UserStore.mixin, AlertsStore.mixin],
+  mixins: [UserStore.mixin],
 
   getInitialState() {
     const state = getState();
     state.selectedTargetUser = null;
-    state.message = null;
+    state.message = '';
     return state;
   },
 
@@ -55,7 +60,7 @@ const GetHelpButton = React.createClass({
     });
     this.props.open(e);
     setTimeout(() => {
-      AlertActions.resetNeedHelpAlert();
+      this.props.actions.resetNeedHelpAlert();
     }, 500);
   },
 
@@ -80,7 +85,7 @@ const GetHelpButton = React.createClass({
       message: this.state.message,
       course_id: this.props.course.id
     };
-    AlertActions.submitNeedHelpAlert(messageData);
+    this.props.actions.submitNeedHelpAlert(messageData);
   },
 
   wikipediaHelpUser() {
@@ -125,7 +130,7 @@ const GetHelpButton = React.createClass({
       );
 
       // Show the program help button only to instructors and other non-students.
-      if (this.props.current_user.role > 0) {
+      if (this.props.currentUser.role > 0) {
         const programHelpUser = this.programHelpUser();
         programHelpButton = (
           <span className="contact-program-help" key={`${programHelpUser.username}-program-help`}>
@@ -161,18 +166,18 @@ const GetHelpButton = React.createClass({
       );
     }
 
-    if (this.state.alertSubmitting) {
+    if (this.props.alertSubmitting) {
       content = (
         <div className="text-center get-help-submitting">
           <strong>Sending message...</strong>
         </div>
       );
-    } else if (this.state.alertCreated) {
+    } else if (this.props.alertCreated) {
       content = (
         <div className="get-help-submitted">
           <p className="text-center"><strong>Message sent!</strong></p>
           <p>
-            We'll get back to you within 1 business day. Be sure to check your email for a response.
+            We&apos;ll get back to you within 1 business day. Be sure to check your email for a response.
           </p>
           <a href="#" className="button" onClick={this.reset}>Ok</a>
         </div>
@@ -186,7 +191,7 @@ const GetHelpButton = React.createClass({
             <fieldset>
               <label htmlFor="message" className="input-wrapper">
                 <span>Your Message:</span>
-                <textarea name="message" className="mb1" onChange={this.updateMessage} defaultValue="" value={this.state.message} />
+                <textarea name="message" className="mb1" onChange={this.updateMessage} value={this.state.message} />
               </label>
             </fieldset>
             <button className="button dark ml0" value="Submit">Send</button>
@@ -195,13 +200,13 @@ const GetHelpButton = React.createClass({
         </div>
       );
     } else {
-      if (this.props.current_user.role > 0) {
+      if (this.props.currentUser.role > 0) {
         faqLink = (
-          <a className="button dark stacked" href="http://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:instructorfaq/page:1/" target="blank">Instructor FAQ</a>
+          <a className="button dark stacked" href="https://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:instructorfaq/page:1/" target="blank">Instructor FAQ</a>
         );
       } else {
         faqLink = (
-          <a className="button dark stacked" href="http://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:studentfaq/page:1/" target="blank">Student FAQ</a>
+          <a className="button dark stacked" href="https://ask.wikiedu.org/questions/scope:all/sort:activity-desc/tags:studentfaq/page:1/" target="blank">Student FAQ</a>
         );
       }
 
@@ -209,7 +214,7 @@ const GetHelpButton = React.createClass({
         <div className="get-help-info">
           <p>
             <strong>
-              Hi! if you need help with your Wikipedia assignment, you've come
+              Hi! if you need help with your Wikipedia assignment, you&apos;ve come
               to the right place!
             </strong>
           </p>
@@ -219,7 +224,7 @@ const GetHelpButton = React.createClass({
             <input name="source" type="hidden" defaultValue="get_help_button" />
             <input type="text" name="q" id="q" defaultValue="" placeholder="Search Help Forum" />
             <button type="submit">
-              <i className="icon icon-search"></i>
+              <i className="icon icon-search" />
             </button>
           </form>
 
@@ -251,4 +256,13 @@ const GetHelpButton = React.createClass({
   }
 });
 
-export default Expandable(GetHelpButton);
+const mapStateToProps = state => ({
+  alertSubmitting: state.needHelpAlert.submitted,
+  alertCreated: state.needHelpAlert.created
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(AlertActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Expandable(GetHelpButton));

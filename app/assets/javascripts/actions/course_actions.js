@@ -19,6 +19,17 @@ const CourseActions = Flux.createActions({
       });
   },
 
+  persistAndRedirectCourse(data, courseId, redirect) {
+    return API.saveCourse(data, courseId)
+      .then(() => redirect())
+      .catch(resp => {
+        return {
+          actionType: 'API_FAIL',
+          data: resp
+        };
+      });
+  },
+
   updateCourse(course, save = false) {
     return {
       actionType: 'UPDATE_COURSE',
@@ -29,44 +40,22 @@ const CourseActions = Flux.createActions({
     };
   },
 
-  setValid(key, isValid) {
-    return {
-      actionType: 'SET_INVALID_KEY',
-      data: {
-        key,
-        valid: isValid
-      }
-    };
-  },
-
-  save() {
-    return {
-      actionType: 'SAVE_COURSE'
-    };
-  },
-
   addCourse() {
     return {
       actionType: 'ADD_COURSE'
     };
   },
 
-  setCourse(course) {
-    return {
-      actionType: 'RECEIVE_COURSE',
-      data: {
-        course
-      }
-    };
-  },
-
   updateClonedCourse(data, courseId, tempId) {
+    const redirectToNewSlug = () => {
+      window.location = `/courses/${tempId}`;
+    };
     // Ensure course name is unique
     return API.fetch(tempId, 'check')
       .then(resp => {
         // Course name is all good... save it
         if (!resp.course_exists) {
-          return CourseActions.persistCourse(data, courseId);
+          return CourseActions.persistAndRedirectCourse(data, courseId, redirectToNewSlug);
         }
 
         // Invalidate if course name taken
@@ -130,7 +119,23 @@ const CourseActions = Flux.createActions({
           data: resp
         };
       });
-  }
+  },
+
+  deleteAllWeeks(courseId) {
+    return API.deleteAllWeeks(courseId)
+      .then((data) => {
+        return {
+          actionType: 'DELETE_ALL_WEEKS',
+          data: { id: data.courseId }
+        };
+      })
+      .catch(resp => {
+        return {
+          actionType: 'API_FAIL',
+          data: resp
+        };
+      });
+  },
 });
 
 export default CourseActions;

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: survey_assignments
@@ -19,7 +20,7 @@
 #  custom_email                            :text(65535)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :survey_assignment do
   end
 end

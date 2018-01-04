@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 def set_up_suite
@@ -11,6 +12,7 @@ def fill_out_course_creator_form
   fill_in 'Course term:', with: 'Spring 2016'
   fill_in 'Course school:', with: 'University of Oklahoma'
   find('#course_expected_students').set('20')
+  find('#course_description').set('My course at OU')
   find('.course_start-datetime-control input').set('2015-01-04')
   find('.course_end-datetime-control input').set('2015-02-01')
   find('div.wizard__panel').click # click to escape the calendar popup
@@ -76,7 +78,14 @@ def go_through_researchwrite_wizard
   click_button 'Next'
   sleep 1
 
+  find('.wizard__option', match: :first).find('button', match: :first).click # Biographies handout
+  click_button 'Next'
+  sleep 1
+
   click_button 'Next' # Default 2 peer reviews
+  sleep 1
+
+  click_button 'Next' # Default 3 discussions
   sleep 1
 
   click_button 'Next' # No supplementary assignments
@@ -107,10 +116,11 @@ describe 'New course creation and editing', type: :feature do
   end
 
   describe 'course workflow', js: true do
-    let(:expected_course_blocks) { 22 }
-    let(:module_name) { 'Practicing the basics' }
+    let(:expected_course_blocks) { 23 }
+    let(:module_name) { 'Get started on Wikipedia' }
 
     it 'should allow the user to create a course' do
+      allow_any_instance_of(User).to receive(:returning_instructor?).and_return(true)
       click_link 'Create Course'
 
       expect(page).to have_content 'Create a New Course'
@@ -162,25 +172,30 @@ describe 'New course creation and editing', type: :feature do
       go_through_course_dates_and_timeline_dates
 
       # This is the assignment type chooser
-      # pick and choose
-      page.all('.wizard__option')[1].first('button').click
+      # Translation assignment
+      page.all('.wizard__option')[2].first('button').click
       sleep 1
       click_button 'Next'
       sleep 1
-      # pick 2 types of assignments
-      page.all('div.wizard__option__checkbox')[1].click
-      page.all('div.wizard__option__checkbox')[3].click
+      click_button 'Yes, training will be graded.'
+      click_button 'Next'
+
+      # Choosing articles
       sleep 1
+      page.all('div.wizard__option')[0].click # Instructor prepares list
+      click_button 'Next'
+
+      # Optional assignment
+      sleep 1
+      click_button 'Do not include fact-checking assignment'
       click_button 'Next'
 
       # on the summary
       sleep 1
-      # go back to the pick and choose and choose different assignments
+      # go back and change a choice
       page.all('button.wizard__option.summary')[2].click
       sleep 1
-      page.all('div.wizard__option__checkbox')[3].click
-      page.all('div.wizard__option__checkbox')[2].click
-      page.all('div.wizard__option__checkbox')[4].click
+      click_button 'No, training will not be graded.'
       sleep 1
       click_button 'Summary'
       sleep 1
@@ -211,7 +226,7 @@ describe 'New course creation and editing', type: :feature do
       find('.week-1').hover
       sleep 0.5
       within('.week-1') do
-        find('.block__edit-block').click
+        omniclick all('.block__edit-block').first
         find('p.graded input[type=checkbox]').set(true)
         sleep 1
         click_button 'Save'
@@ -264,6 +279,7 @@ describe 'New course creation and editing', type: :feature do
       find('#course_term').set('Term')
       find('#course_subject').set('Advanced Studies')
       find('#course_expected_students').set('15')
+      find('#course_description').set('My course')
 
       start_date = '2015-01-01'
       end_date = '2015-12-15'
@@ -381,7 +397,8 @@ describe 'New course creation and editing', type: :feature do
 
       # Finish the wizard
       click_button 'Generate Timeline'
-      expect(page).to have_content 'Add Assignment'
+      expect(page).to have_content 'Launch the Wizard' # 'no timeline' banner above the Timeline
+      expect(page).to have_content 'Add Assignment' # Button in the Timeline
       sleep 1
 
       # Add a week
@@ -389,7 +406,6 @@ describe 'New course creation and editing', type: :feature do
         find('.week-nav__add-week').click
       end
       sleep 1
-      page.save_screenshot
       within '.timeline__weeks' do
         expect(page).to have_content 'Week 1'
         find('.week__add-block').click
@@ -415,27 +431,28 @@ describe 'New course creation and editing', type: :feature do
 end
 
 describe 'timeline editing', js: true do
-  let!(:course) do
+  let(:course) do
     create(:course, id: 10001, start: Date.new(2015, 1, 1),
                     end: Date.new(2015, 2, 1), submitted: true,
                     timeline_start: Date.new(2015, 1, 1), timeline_end: Date.new(2015, 2, 1),
                     weekdays: '0111110')
   end
-  let!(:user)      { create(:user, permissions: User::Permissions::ADMIN) }
-  let!(:c_user)    { create(:courses_user, course_id: course.id, user_id: user.id) }
+  let(:user) { create(:user, permissions: User::Permissions::ADMIN) }
+  let!(:c_user) { create(:courses_user, course_id: course.id, user_id: user.id) }
 
-  let!(:week)      { create(:week, course_id: course.id, order: 0) }
-  let!(:week2)     { create(:week, course_id: course.id, order: 1) }
-  let!(:block)     { create(:block, week_id: week.id, kind: Block::KINDS['assignment'], order: 0, title: 'Block 1') }
-  let!(:block2)    { create(:block, week_id: week.id, kind: Block::KINDS['in_class'], order: 1, title: 'Block 2') }
-  let!(:block3)    { create(:block, week_id: week.id, kind: Block::KINDS['in_class'], order: 2, title: 'Block 3') }
-  let!(:block4)    { create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 0, title: 'Block 4') }
-  let!(:block5)    { create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 1, title: 'Block 5') }
-  let!(:block6)    { create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 3, title: 'Block 6') }
+  let(:week) { create(:week, course_id: course.id, order: 0) }
+  let(:week2) { create(:week, course_id: course.id, order: 1) }
 
   before do
     set_up_suite
     login_as user, scope: :user, run_callbacks: false
+
+    create(:block, week_id: week.id, kind: Block::KINDS['assignment'], order: 0, title: 'Block 1')
+    create(:block, week_id: week.id, kind: Block::KINDS['in_class'], order: 1, title: 'Block 2')
+    create(:block, week_id: week.id, kind: Block::KINDS['in_class'], order: 2, title: 'Block 3')
+    create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 0, title: 'Block 4')
+    create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 1, title: 'Block 5')
+    create(:block, week_id: week2.id, kind: Block::KINDS['in_class'], order: 3, title: 'Block 6')
   end
 
   it 'disables reorder up/down buttons when it is the first or last block' do

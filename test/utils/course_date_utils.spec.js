@@ -6,7 +6,7 @@ import CourseDateUtils from '../../app/assets/javascripts/utils/course_date_util
 const typicalCourse = {
   id: 1,
   type: 'ClassroomProgramCourse',
-  start: '2015-08-28',
+  start: '2015-07-28',
   timeline_start: '2015-08-28',
   end: '2016-01-14',
   timeline_end: '2016-01-14',
@@ -109,6 +109,35 @@ describe('CourseDateUtils.formattedDateTime', () => {
     const input = new Date(2016, 10, 19, 17, 15, 14);
     const output = CourseDateUtils.formattedDateTime(input, true);
     expect(output).to.contain('2016-11-19 17:15');
+  });
+});
+
+describe('courseDateUtils.weeksBeforeTimeline', () => {
+  it('rounds times within the same week to zero', () => {
+    const course = { start: '2017-07-02', timeline_start: '2017-07-05' };
+    const output = CourseDateUtils.weeksBeforeTimeline(course);
+    expect(output).to.be.eq(0);
+  });
+  it('counts whole weeks accurately, Sunday to Sunday', () => {
+    const course = { start: '2017-07-02', timeline_start: '2017-07-09' };
+    const output = CourseDateUtils.weeksBeforeTimeline(course);
+    expect(output).to.be.eq(1);
+  });
+  it('counts partial weeks if they cross between Sunday-bounded weeks', () => {
+    const course = { start: '2017-07-06', timeline_start: '2017-07-10' };
+    const output = CourseDateUtils.weeksBeforeTimeline(course);
+    expect(output).to.be.eq(1);
+  });
+  it('rounds down to the number of week boundaries crossed', () => {
+    const course = { start: '2017-07-02', timeline_start: '2017-07-13' };
+    const output = CourseDateUtils.weeksBeforeTimeline(course);
+    expect(output).to.be.eq(1);
+  });
+  it('works for longer stretches', () => {
+    // Example dates from a Fall 2017 course
+    const course = { start: '2017-08-29', timeline_start: '2017-10-23' };
+    const output = CourseDateUtils.weeksBeforeTimeline(course);
+    expect(output).to.be.eq(8);
   });
 });
 

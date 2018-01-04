@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class UntrainedStudentsAlertManager
   def initialize(courses)
     @courses = courses
@@ -6,16 +7,17 @@ class UntrainedStudentsAlertManager
 
   def create_alerts
     @courses.each do |course|
+      next unless course.type == 'ClassroomProgramCourse'
       next if Alert.exists?(course_id: course.id, type: 'UntrainedStudentsAlert')
       next unless training_very_overdue?(course)
       alert = Alert.create(type: 'UntrainedStudentsAlert', course_id: course.id)
-      alert.email_course_admins
+      alert.send_email
     end
   end
 
   private
 
-  UNTRAINED_GRACE_PERIOD = 19
+  UNTRAINED_GRACE_PERIOD = 30
   EXPECTED_COMPLETION_RATE = 0.75
   def training_very_overdue?(course)
     return false if course.user_count.zero?
@@ -28,7 +30,7 @@ class UntrainedStudentsAlertManager
   end
 
   def dates_of_overdue_trainings(course)
-    training_blocks = course.blocks.select { |block| !block.training_module_ids.empty? }
+    training_blocks = course.blocks.reject { |block| block.training_module_ids.empty? }
     assignment_dates = training_blocks.map do |block|
       block.week.meeting_dates.last
     end

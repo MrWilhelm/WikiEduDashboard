@@ -16,9 +16,23 @@
 #  target_user_id :integer
 #  subject_id     :integer
 #  resolved       :boolean          default(FALSE)
+#  details        :text(65535)
 #
 
 require 'rails_helper'
+
+def mock_mailer
+  OpenStruct.new(deliver_now: true)
+end
+
+# An alert has a subject_id that can refer to any model, depending on the type.
+# Here we create the subject record for the types that require one.
+def alert_subject(alert_type)
+  case alert_type
+  when 'SurveyResponseAlert'
+    create(:q_checkbox)
+  end
+end
 
 describe Alert do
   let(:article) { create(:article) }
@@ -27,6 +41,7 @@ describe Alert do
   let(:user) { create(:user) }
   let(:alert) { create(:alert, type: 'ArticlesForDeletionAlert', resolved: false) }
   let(:active_course_alert) { create(:active_course_alert) }
+  let(:admin) { create(:admin) }
 
   describe 'abstract parent class' do
     it 'raises errors for required template methods' do
@@ -40,10 +55,11 @@ describe Alert do
     it 'all implement #main_subject' do
       Alert::ALERT_TYPES.each do |type|
         Alert.create(type: type,
-                     article_id: article.id,
-                     course_id: course.id,
-                     revision_id: revision.id,
-                     user_id: user.id)
+                     article: article,
+                     course: course,
+                     revision: revision,
+                     user: user,
+                     subject_id: alert_subject(type)&.id)
         expect(Alert.last.main_subject).to be_a(String)
       end
     end
@@ -100,6 +116,19 @@ describe Alert do
       Alert.last.email_content_expert
       Alert.last.email_course_admins
       Alert.last.email_target_user
+    end
+
+    it 'still sends emails for other alert types' do
+      expect_any_instance_of(AlertMailer).to receive(:alert).and_return(mock_mailer)
+      create(:courses_user, course: course, user: admin,
+                            role: CoursesUsers::Roles::WIKI_ED_STAFF_ROLE)
+      Alert.create(type: 'ActiveCourseAlert',
+                   article_id: article.id,
+                   course_id: course.id,
+                   revision_id: revision.id,
+                   user_id: user.id,
+                   target_user_id: user.id)
+      Alert.last.email_course_admins
     end
   end
 end

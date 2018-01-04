@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe AlertMailer do
@@ -27,19 +28,6 @@ describe AlertMailer do
         expect(Features).to receive(:email?).and_return(true)
         expect(admin_mail.to).to eq([admin.email])
         expect(admin_mail.body.encoded).to include('Resolve')
-      end
-    end
-
-    context 'for a NoEnrolledStudentsAlert' do
-      let(:alert) do
-        create(:alert, type: 'NoEnrolledStudentsAlert', course_id: course.id)
-        Alert.last
-      end
-
-      it 'delivers an email with to the recipient' do
-        expect(Features).to receive(:email?).and_return(true)
-        expect(mail.subject).to include(course.slug)
-        expect(mail.to).to eq([user.email])
       end
     end
   end

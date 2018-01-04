@@ -1,21 +1,24 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import { connect } from "react-redux";
+
 import CourseUtils from '../../utils/course_utils.js';
 import ServerActions from '../../actions/server_actions.js';
 import AssignmentActions from '../../actions/assignment_actions.js';
-import NotificationActions from '../../actions/notification_actions.js';
+import { addNotification } from '../../actions/notification_actions.js';
 
-const AvailableArticle = React.createClass({
+export const AvailableArticle = createReactClass({
   displayName: 'AvailableArticle',
 
   propTypes: {
-    assignment: React.PropTypes.object,
-    current_user: React.PropTypes.object,
-    course: React.PropTypes.object
+    assignment: PropTypes.object,
+    current_user: PropTypes.object,
+    course: PropTypes.object,
+    addNotification: PropTypes.func
   },
 
-  onSelectHandler(e) {
-    e.preventDefault();
-
+  onSelectHandler() {
     const assignment = {
       id: this.props.assignment.id,
       user_id: this.props.current_user.id,
@@ -23,7 +26,7 @@ const AvailableArticle = React.createClass({
     };
 
     const title = this.props.assignment.article_title;
-    NotificationActions.addNotification({
+    this.props.addNotification({
       message: I18n.t('assignments.article', { title }),
       closable: true,
       type: 'success'
@@ -52,7 +55,7 @@ const AvailableArticle = React.createClass({
   render() {
     const className = 'assignment';
     const { assignment } = this.props;
-    const article = CourseUtils.articleFromAssignment(assignment);
+    const article = CourseUtils.articleFromAssignment(assignment, this.props.course.home_wiki);
     const ratingClass = `rating ${assignment.article_rating}`;
     const ratingMobileClass = `${ratingClass} tablet-only`;
     const articleLink = <a onClick={this.stop} href={article.url} target="_blank" className="inline">{article.formatted_title}</a>;
@@ -94,4 +97,6 @@ const AvailableArticle = React.createClass({
 }
 );
 
-export default AvailableArticle;
+const mapDispatchToProps = { addNotification };
+
+export default connect(null, mapDispatchToProps)(AvailableArticle);

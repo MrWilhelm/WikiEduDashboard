@@ -1,6 +1,6 @@
 import '../../testHelper';
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import Student from '../../../app/assets/javascripts/components/students/student.jsx';
 import { click } from '../../customUtils.js';
 
@@ -31,14 +31,24 @@ describe('Student', () => {
   const studentElement = ReactTestUtils.renderIntoDocument(
     <table>
       <tbody>
-        <Student student={studentUser} course={course} editable={false} published={true} current_user ={currentUser} assigned={assigned} assignments={assigned} reviewing={assigned} />
+        <Student
+          store={reduxStore}
+          student={studentUser}
+          course={course}
+          course_id="Couse_school/Foo_(Couse_term)"
+          editable={false}
+          published={true}
+          current_user={currentUser}
+          assigned={assigned}
+          assignments={assigned}
+          reviewing={assigned}
+        />
       </tbody>
     </table>
   );
   it('displays the name of the user', () => {
     expect(studentElement.textContent).to.contain('Adam');
-  }
-  );
+  });
   it('opens drawer when clicked', () => {
     const row = studentElement.querySelector('tr');
     expect(row.className).to.eq('students');
@@ -46,7 +56,5 @@ describe('Student', () => {
       expect(row.className).to.contain('open');
       done();
     });
-  }
-  );
-}
-);
+  });
+});

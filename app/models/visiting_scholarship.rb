@@ -41,6 +41,10 @@
 #  home_wiki_id          :integer
 #  recent_revision_count :integer          default(0)
 #  needs_update          :boolean          default(FALSE)
+#  chatroom_id           :string(255)
+#  flags                 :text(65535)
+#  level                 :string(255)
+#  private               :boolean          default(FALSE)
 #
 
 class VisitingScholarship < Course
@@ -51,6 +55,10 @@ class VisitingScholarship < Course
   end, through: :students)
 
   def wiki_edits_enabled?
+    false
+  end
+
+  def wiki_course_page_enabled?
     false
   end
 

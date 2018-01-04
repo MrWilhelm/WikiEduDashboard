@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class SurveyResponseAlertManager
   def initialize
     @answers = recent_answers_to_alert_questions
@@ -8,11 +9,16 @@ class SurveyResponseAlertManager
     @answers.each do |answer|
       next unless answer_meets_alert_conditions?(answer)
       next if alert_already_exists?(answer)
-
+      details = {
+        question: answer.question.question_text,
+        answer: answer.answer_text,
+        followup: answer.follow_up_answer_text
+      }
       alert = Alert.create(type: 'SurveyResponseAlert',
                            message: alert_message(answer),
                            user_id: answer.user.id,
                            subject_id: answer.question.id,
+                           details: details,
                            target_user_id: alert_recipient&.id)
       alert.email_target_user
     end
@@ -55,6 +61,6 @@ class SurveyResponseAlertManager
   end
 
   def alert_recipient
-    User.find_by(username: ENV['survey_alerts_recipient'])
+    SpecialUsers.survey_alerts_recipient
   end
 end

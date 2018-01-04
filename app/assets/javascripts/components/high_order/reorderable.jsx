@@ -1,13 +1,16 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
+import _ from 'lodash';
 
 // This component is used for components which function both as draggable
 // items and also as their own "drop targets". As of 8/12/2015 the Block
 // component is the only implementation of this concept.
 
 // An overview of React-DnD, explaining the concepts summarized below
-// http://gaearon.github.io/react-dnd/docs-overview.html
+// https://react-dnd.github.io/react-dnd/docs-overview.html
 
 // param {React Component} Component - The component to be given reorderable properties
 // param {String} Type - The kind of data model represented by the Component
@@ -62,24 +65,25 @@ export default function (Component, Type, MoveFunction) {
   const targetConnect = (connect) => ({ connectDropTarget: connect.dropTarget() });
 
   // Simple wrapper for rendering the passed Component as draggable or not
-  const Reorderable = React.createClass({
+  const Reorderable = createReactClass({
     displayName: 'Reorderable',
 
     propTypes: {
-      canDrag: React.PropTypes.bool,
-      connectDropTarget: React.PropTypes.func,
-      connectDragSource: React.PropTypes.func,
-      connectDragPreview: React.PropTypes.func
+      canDrag: PropTypes.bool,
+      connectDropTarget: PropTypes.func,
+      connectDragSource: PropTypes.func,
+      connectDragPreview: PropTypes.func
     },
 
     render() {
       if (this.props.canDrag) {
         return (
-          <Component {...this.props} ref={(instance) => {
-            this.props.connectDropTarget(findDOMNode(instance));
-            this.props.connectDragSource(findDOMNode(instance), { dropEffect: 'move' });
-            this.props.connectDragPreview(findDOMNode(instance));
-          }}
+          <Component
+            {...this.props} ref={(instance) => {
+              this.props.connectDropTarget(findDOMNode(instance));
+              this.props.connectDragSource(findDOMNode(instance), { dropEffect: 'move' });
+              this.props.connectDragPreview(findDOMNode(instance));
+            }}
           />
         );
       }

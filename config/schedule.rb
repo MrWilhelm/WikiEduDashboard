@@ -21,7 +21,7 @@
 
 set :output, 'log/cron.log'
 
-every 15.minutes do
+every 4.minutes do
   rake 'batch:update_constantly'
 end
 
@@ -29,6 +29,14 @@ every 1.day, at: '4:30 am' do
   rake 'batch:update_daily'
 end
 
+every 1.day, at: '4:35 am' do
+  rake 'batch:update_views'
+end
+
 every [:monday, :tuesday, :wednesday, :thursday], at: '10:15 am' do
   rake 'batch:survey_update'
+end
+
+every [:monday, :tuesday, :wednesday, :thursday], at: '10:30 am' do
+  rake 'experiments:fall_2017_cmu_experiment'
 end

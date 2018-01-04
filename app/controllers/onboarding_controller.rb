@@ -15,11 +15,11 @@ class OnboardingController < ApplicationController
     validate_params
     @user = current_user
     set_new_permissions
-    @user.update_attributes(real_name: params[:real_name],
+    @user.update_attributes(real_name: sanitized_real_name,
                             email: params[:email],
                             permissions: @permissions,
                             onboarded: true)
-
+    CheckWikiEmailWorker.check(user: @user)
     head :no_content
   end
 
@@ -36,8 +36,12 @@ class OnboardingController < ApplicationController
   end
 
   def validate_params
-    [:real_name, :email, :instructor].each_with_object(params) do |key, obj|
+    %i[real_name email instructor].each_with_object(params) do |key, obj|
       obj.require(key)
     end
+  end
+
+  def sanitized_real_name
+    params[:real_name].squish
   end
 end

@@ -1,12 +1,17 @@
 # frozen_string_literal: true
+
 require './lib/wiki_api'
+require "#{Rails.root}/lib/wiki_output_templates"
 #= Class for generating wikitext for updating assignment details on talk pages
 class WikiAssignmentOutput
-  def initialize(course, title, talk_title, assignments)
+  include WikiOutputTemplates
+
+  def initialize(course, title, talk_title, assignments, templates)
     @course = course
     @course_page = course.wiki_title
     @wiki = course.home_wiki
     @dashboard_url = ENV['dashboard_url']
+    @templates = templates
     @assignments = assignments
     @title = title
     @talk_title = talk_title
@@ -15,8 +20,8 @@ class WikiAssignmentOutput
   ###############
   # Entry point #
   ###############
-  def self.wikitext(course:, title:, talk_title:, assignments:)
-    new(course, title, talk_title, assignments).build_talk_page_update
+  def self.wikitext(course:, title:, talk_title:, assignments:, templates:)
+    new(course, title, talk_title, assignments, templates).build_talk_page_update
   end
 
   ################
@@ -24,7 +29,9 @@ class WikiAssignmentOutput
   ################
   def build_talk_page_update
     initial_page_content = WikiApi.new(@wiki).get_page_content(@talk_title)
-    initial_page_content ||= ''
+    # This indicates an API failure, which may happen because of rate-limiting.
+    # A nonexistent page will return empty string instead of nil.
+    return nil if initial_page_content.nil?
 
     # Do not post templates to disambugation pages
     return nil if includes_disambiguation_template?(initial_page_content)
@@ -32,7 +39,7 @@ class WikiAssignmentOutput
     # We only want to add assignment tags to non-existant talk pages if the
     # article page actually exists, and is not a disambiguation page.
     article_content = WikiApi.new(@wiki).get_page_content(@title)
-    return nil if article_content.nil?
+    return nil if article_content.blank?
     return nil if includes_disambiguation_template?(article_content)
 
     page_content = build_assignment_page_content(assignments_tag, initial_page_content)
@@ -55,7 +62,7 @@ class WikiAssignmentOutput
     # post duplicate tags for the same page, unless we update the way that
     # we check for the presense of existging tags to account for both the new
     # and old formats.
-    tag = "{{#{@dashboard_url} assignment | course = #{@course_page}"
+    tag = "{{#{template_name(@templates, 'course_assignment')} | course = #{@course_page}"
     tag += " | assignments = #{tag_assigned}" unless tag_assigned.blank?
     tag += " | reviewers = #{tag_reviewing}" unless tag_reviewing.blank?
     tag += ' }}'
@@ -78,7 +85,7 @@ class WikiAssignmentOutput
     end
 
     # Check for existing tags and replace
-    old_tag_ex = "{{course assignment | course = #{@course_page}"
+    old_tag_ex = "{{#{template_name(@templates, 'course_assignment')} | course = #{@course_page}"
     new_tag_ex = "{{#{@dashboard_url} assignment | course = #{@course_page}"
     page_content.gsub!(/#{Regexp.quote(old_tag_ex)}[^\}]*\}\}/, new_tag)
     page_content.gsub!(/#{Regexp.quote(new_tag_ex)}[^\}]*\}\}/, new_tag)

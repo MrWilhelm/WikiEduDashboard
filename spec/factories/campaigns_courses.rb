@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: campaigns_courses
@@ -10,7 +11,7 @@
 #  updated_at  :datetime
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :campaigns_course, class: 'CampaignsCourses' do
   end
 end

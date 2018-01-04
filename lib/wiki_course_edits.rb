@@ -1,18 +1,27 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/wiki_edits"
-require './lib/wiki_course_output'
-require './lib/wikitext'
+require "#{Rails.root}/lib/wiki_course_output"
+require "#{Rails.root}/lib/wiki_assignment_output"
+require "#{Rails.root}/lib/wikitext"
+require "#{Rails.root}/lib/wiki_output_templates"
 
 #= Class for making wiki edits for a particular course
 class WikiCourseEdits
+  include WikiOutputTemplates
+
   def initialize(action:, course:, current_user:, **opts)
     return unless course.wiki_edits_enabled?
+    return if course.private # Never make edits for private courses.
     @course = course
     # Edits can only be made to the course's home wiki through WikiCourseEdits
     @home_wiki = course.home_wiki
+    return unless @home_wiki.edits_enabled?
     @wiki_editor = WikiEdits.new(@home_wiki)
     @dashboard_url = ENV['dashboard_url']
     @current_user = current_user
+    template_file_path = "config/templates/#{@dashboard_url}_#{@home_wiki.language}.yml"
+    @templates = YAML.load_file(Rails.root + template_file_path)
     send(action, opts)
   end
 
@@ -20,23 +29,19 @@ class WikiCourseEdits
   # set of participants, articles, timeline, and other details.
   # It simply overwrites the previous version.
   def update_course(delete: false)
-    return unless @course.submitted && @course.slug
-
-    wiki_text = delete ? '' : WikiCourseOutput.new(@course).translate_course_to_wikitext
-
-    course_prefix = ENV['course_prefix']
-    wiki_title = "#{course_prefix}/#{@course.slug}"
+    return unless @course.wiki_course_page_enabled?
+    wiki_text = delete ? '' : WikiCourseOutput.new(@course, @templates).translate_course_to_wikitext
 
     summary = "Updating course from #{@dashboard_url}"
 
     # Post the update
-    response = @wiki_editor.post_whole_page(@current_user, wiki_title, wiki_text, summary)
+    response = @wiki_editor.post_whole_page(@current_user, @course.wiki_title, wiki_text, summary)
     return response unless response['edit']
 
     # If it hit the spam blacklist, replace the offending links and try again.
     blacklist = response['edit']['spamblacklist']
     return response if blacklist.nil?
-    repost_with_sanitized_links(wiki_title, wiki_text, summary, blacklist)
+    repost_with_sanitized_links(@course.wiki_title, wiki_text, summary, blacklist)
   end
 
   # Posts to the instructor's userpage, and also makes a public
@@ -53,14 +58,23 @@ class WikiCourseEdits
   # already exist.
   def enroll_in_course(enrolling_user:)
     # Add a template to the user page
-    template = "{{student editor|course = [[#{@course.wiki_title}]] }}\n"
+    template = "{{#{template_name(@templates, 'editor')}|course = [[#{@course.wiki_title}]]"\
+               " | slug = #{@course.slug} }}\n"
     user_page = "User:#{enrolling_user.username}"
     summary = "User has enrolled in [[#{@course.wiki_title}]]."
     @wiki_editor.add_to_page_top(user_page, @current_user, template, summary)
 
+    # Add a template to the user's talk page
+    talk_template = "{{#{template_name(@templates, 'user_talk')}|course = [[#{@course.wiki_title}]]"\
+                    " | slug = #{@course.slug} }}\n"
+    talk_page = "User_talk:#{enrolling_user.username}"
+    talk_summary = "adding {{#{template_name(@templates, 'user_talk')}}}"
+    @wiki_editor.add_to_page_top(talk_page, @current_user, talk_template, talk_summary)
+
     # Pre-create the user's sandbox
     # TODO: Do this more selectively, replacing the default template if
     # it is present.
+    return unless Features.wiki_ed?
     sandbox = user_page + '/sandbox'
     sandbox_template = "{{#{@dashboard_url} sandbox}}"
     sandbox_summary = "adding {{#{@dashboard_url} sandbox}}"
@@ -109,7 +123,7 @@ class WikiCourseEdits
 
   def add_course_template_to_instructor_userpage(instructor)
     user_page = "User:#{instructor.username}"
-    template = "{{course instructor|course = [[#{@course.wiki_title}]] }}\n"
+    template = "{{#{template_name(@templates, 'instructor')}|course = [[#{@course.wiki_title}]] }}\n"
     summary = "New course announcement: [[#{@course.wiki_title}]]."
 
     @wiki_editor.add_to_page_top(user_page, @current_user, template, summary)
@@ -130,23 +144,25 @@ class WikiCourseEdits
   end
 
   def homewiki_assignments_grouped_by_article
-    # Only do on-wiki updates for articles that are on the course's home wiki.
-    @course.assignments.where(wiki_id: @home_wiki.id)
+    # Only do on-wiki updates for articles that are on the course's home wiki
+    # and that are not 'available articles' with no assigned user.
+    @course.assignments.where(wiki: @home_wiki)
            .where.not(article_id: nil)
+           .where.not(user_id: nil)
            .group_by(&:article_id)
   end
 
   def update_assignments_for_article(title:, assignments_for_same_article:)
-    require './lib/wiki_assignment_output'
     return if WikiApi.new(@home_wiki).redirect?(title)
 
-    # TODO: i18n of talk namespace
+    # MediaWiki will automatically handle i18n of the namespace
     talk_title = "Talk:#{title.tr(' ', '_')}"
 
     page_content = WikiAssignmentOutput.wikitext(course: @course,
                                                  title: title,
                                                  talk_title: talk_title,
-                                                 assignments: assignments_for_same_article)
+                                                 assignments: assignments_for_same_article,
+                                                 templates: @templates)
 
     return if page_content.nil?
     summary = "Update [[#{@course.wiki_title}|#{@course.title}]] assignment details"

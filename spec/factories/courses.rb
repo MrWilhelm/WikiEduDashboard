@@ -41,9 +41,13 @@
 #  home_wiki_id          :integer
 #  recent_revision_count :integer          default(0)
 #  needs_update          :boolean          default(FALSE)
+#  chatroom_id           :string(255)
+#  flags                 :text(65535)
+#  level                 :string(255)
+#  private               :boolean          default(FALSE)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :course, class: 'ClassroomProgramCourse' do
     start Date.new(2015, 1, 1)
     self.end Date.new(2015, 6, 1)
@@ -100,6 +104,18 @@ FactoryGirl.define do
     slug 'PRB/Legacy_basket-weaving_edit-a-thon_(spring_2013)'
     passcode 'pizza'
     type 'LegacyCourse'
+    home_wiki_id 1
+  end
+
+  factory :article_scoped_program, class: 'ArticleScopedProgram' do
+    start Date.new(2013, 1, 1)
+    self.end Date.new(2013, 6, 1)
+    title 'Only basket-weaving'
+    school 'WMIT'
+    term 'spring 2013'
+    slug 'WMIT/Only_basket-weaving_edit-a-thon_(spring_2013)'
+    passcode 'pizza'
+    type 'ArticleScopedProgram'
     home_wiki_id 1
   end
 end

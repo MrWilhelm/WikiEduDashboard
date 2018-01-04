@@ -1,11 +1,13 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-const Intro = React.createClass({
+const Intro = createReactClass({
   propTypes: {
-    currentUser: React.PropTypes.object,
-    returnToParam: React.PropTypes.string,
-    location: React.PropTypes.object
+    currentUser: PropTypes.object,
+    returnToParam: PropTypes.string,
+    location: PropTypes.object
   },
 
   getInitialState() {
@@ -26,7 +28,7 @@ const Intro = React.createClass({
           }}
           className="button border inverse-border"
         >
-          Start <i className="icon icon-rt_arrow"></i>
+          Start <i className="icon icon-rt_arrow" />
         </Link>
       </div>
     );

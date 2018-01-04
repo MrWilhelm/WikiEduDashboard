@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 require "#{Rails.root}/lib/analytics/campaign_csv_builder"
+require "#{Rails.root}/lib/analytics/ores_diff_csv_builder"
+
 #= Controller for campaign data
 class CampaignsController < ApplicationController
-  layout 'admin', only: [:index, :create]
-  before_action :set_campaign, only: [:overview, :programs, :edit, :update, :destroy,
-                                      :add_organizer, :remove_organizer, :remove_course]
+  layout 'admin', only: %i[index create]
+  before_action :set_campaign, only: %i[overview programs articles users edit
+                                        update destroy add_organizer remove_organizer
+                                        remove_course courses ores_plot articles_csv]
   before_action :require_create_permissions, only: [:create]
-  before_action :require_write_permissions, only: [:update, :destroy, :add_organizer,
-                                                   :remove_organizer, :remove_course, :edit]
+  before_action :require_write_permissions, only: %i[update destroy add_organizer
+                                                     remove_organizer remove_course edit]
 
-  DETAILS_FIELDS = %w(title start end).freeze
+  DETAILS_FIELDS = %w[title start end].freeze
 
   def index
     @campaigns = Campaign.all
@@ -46,12 +49,29 @@ class CampaignsController < ApplicationController
     @editable = current_user&.admin? || user_is_organizer?
   end
 
+  def articles
+    set_presenter
+  end
+
+  def users
+    set_presenter
+    @courses_users = CoursesUsers.where(
+      course: @campaign.courses.nonprivate, role: CoursesUsers::Roles::STUDENT_ROLE
+    ).includes(:user, :course).order(revision_count: :desc)
+  end
+
   def edit
     set_presenter
   end
 
   def programs
     set_presenter
+    @search_terms = params[:courses_query]
+  end
+
+  def ores_plot
+    set_presenter
+    @ores_plot_path = HistogramPlotter.plot(campaign: @campaign, opts: { simple: true })
   end
 
   def update
@@ -61,11 +81,9 @@ class CampaignsController < ApplicationController
     else
       set_presenter
       @editable = true
-
       # If one of the Details fields was invalid, passing instance variable
       # used to show the Details form in 'edit mode'
       @open_details = (@campaign.errors.messages.keys & DETAILS_FIELDS).empty?
-
       render :edit
     end
   end
@@ -104,8 +122,10 @@ class CampaignsController < ApplicationController
   end
 
   def remove_course
-    campaigns_course = CampaignsCourses.find_by(course_id: params[:course_id], campaign_id: @campaign.id)
-    message = campaigns_course&.destroy ? 'campaign.course_removed' : 'campaign.course_already_removed'
+    campaigns_course = CampaignsCourses.find_by(course_id: params[:course_id],
+                                                campaign_id: @campaign.id)
+    result = campaigns_course&.destroy
+    message = result ? 'campaign.course_removed' : 'campaign.course_already_removed'
     flash[:notice] = t(message, title: params[:course_title],
                                 campaign_title: @campaign.title)
     redirect_to programs_campaign_path(@campaign.slug)
@@ -124,11 +144,20 @@ class CampaignsController < ApplicationController
   end
 
   def courses
-    set_campaign
     filename = "#{@campaign.slug}-courses-#{Time.zone.today}.csv"
     respond_to do |format|
       format.csv do
         send_data CampaignCsvBuilder.new(@campaign).courses_to_csv,
+                  filename: filename
+      end
+    end
+  end
+
+  def articles_csv
+    filename = "#{@campaign.slug}-articles-#{Time.zone.today}.csv"
+    respond_to do |format|
+      format.csv do
+        send_data OresDiffCsvBuilder.new(@campaign.courses).articles_to_csv,
                   filename: filename
       end
     end

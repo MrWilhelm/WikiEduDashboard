@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import ReactDOM from 'react-dom';
 import TrixEditor from 'react-trix';
 import DatePicker from '../components/common/date_picker.jsx';
@@ -57,7 +58,7 @@ const StyleguideExamples = {
   },
 
   popover() {
-    const PopoverExample = React.createClass({
+    const PopoverExample = createReactClass({
       getInitialState() {
         return {
           open: false
@@ -73,13 +74,13 @@ const StyleguideExamples = {
       render() {
         const editRow = (
           <tr className="edit">
-            <td>"Edit row" content: Lorem ipsum dolor sit amet.</td>
+            <td>&quot;Edit row&quot; content: Lorem ipsum dolor sit amet.</td>
           </tr>
         );
 
         const rows = (
           <tr>
-            <td>"Rows" content: Lorem ipsum dolor sit amet.</td>
+            <td>&quot;Rows&quot; content: Lorem ipsum dolor sit amet.</td>
           </tr>
         );
 

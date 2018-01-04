@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class TrainingModulePresenter
   attr_reader :training_module, :progress_manager
 
@@ -23,7 +24,7 @@ class TrainingModulePresenter
   def cta_button_link
     first_element = @routes.training_module_path(@params[:library_id], @params[:module_id])
     last_element = if @progress_manager.module_completed? || @progress_manager.module_progress.nil?
-                     @training_module.slides.first.slug
+                     @training_module.slides.first&.slug
                    else
                      last_slide_completed
                    end
@@ -35,6 +36,7 @@ class TrainingModulePresenter
   end
 
   def should_show_ttc?
+    return false unless @training_module.estimated_ttc
     training_modules_user.nil? || @progress_manager.module_completed?
   end
 

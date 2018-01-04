@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: articles_courses
@@ -13,7 +14,7 @@
 #  new_article   :boolean          default(FALSE)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :articles_course, class: 'ArticlesCourses' do
     nil
   end

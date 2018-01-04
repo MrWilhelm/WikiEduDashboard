@@ -3,17 +3,24 @@
 # Export driver: phpyaml
 # Author: AndroidOSUser
 # Author: Caçador de Palavras
+# Author: Chicocvenancio
+# Author: Contraexemplo
 # Author: Cristofer Alves
 # Author: Dianakc
+# Author: EVinente
 # Author: Eduardo Addad de Oliveira
+# Author: Felipe L. Ewald
 # Author: HenriqueCrang
 # Author: Ixocactus
 # Author: Joalpe
 # Author: LucyDiniz
 # Author: Luk3
 # Author: Macofe
+# Author: Maxan
 # Author: Peter Fernando
 # Author: Raphaelras
+# Author: Rukasuoribera
+# Author: Trigonometria87
 ---
 pt-br:
   accessibility:
@@ -22,13 +29,15 @@ pt-br:
   application:
     cancel: Cancelar
     dashboard: Painel do Wiki Ed
+    documentation: Documentação
     error: 'Ocorreu um erro:'
     explore: Explorar
     field_required: Este campo é obrigatório
     field_invalid_characters: Este campo tem caracteres inválidos
     field_invalid_date: Este campo requer a data no formato AAAA-MM-DD
+    field_invalid_date_time: O fim deve vir após o início. (Horas vão de 0 a 23.)
     greeting2: Bem-vindo(a)!
-    greeting_extended: Bem-vindo à Wikipédia
+    greeting_extended: Bem-vindo(a) à Wikipédia
     greeting: Olá!
     help: Ajuda
     home: Início
@@ -37,7 +46,9 @@ pt-br:
     log_out: Sair
     my_dashboard: Meu painel
     recent_activity: Atividade recente
+    report_problem: Informar um problema
     search: perguntar
+    search_results: 'Resultados para: ''%{search_terms}'''
     sign_up_extended: Registrar-se na Wikipédia
     sign_up_log_in_extended: pela Wikipédia
     sign_up: Criar conta
@@ -64,7 +75,14 @@ pt-br:
       ajudá-lo a começar (Leva aproximadamente 30 minutos para completar.)
     review_orientation: Revisar a orientação
     start_orientation: Começar Orientação
-    blog_headline: Notícias Recentes de Wiki Ed
+    blog_headline: Notícias Recentes de Wiki Educação
+    about_programs: Esse site rastrea atividades através de Programas — eventos individuais
+      como uma editatona ou cadeira universitária. Cada programa é parte de uma ou
+      mais campanhas, que provê estatísticas agregadas para programas.
+    about_creating_programs: Se estás coordenando um evento único, independente, podes
+      criar um programa agora. Se o seu programa é parte de algo maior, encontre ou
+      crie a campanha para ele. Poderás então criar o seu novo programa a partir da
+      página da campanha.
   home:
     explore: Explorar
     log_in: Entrar pela Wikipédia
@@ -82,6 +100,11 @@ pt-br:
     assigned_to: Atribuído a
     character_doc: A soma de caracteres adicionados a artigos por editores inscritos
       durante as datas de começo e fim
+    cross_wiki_tracking: Páginas do domínio principal editadas entre as datas de início
+      e fim são listadas abaixo. O painel analisa as contribuições da wiki principal
+      desse programa, assim como outras wiki para as quais houver um Artigo Designado
+      ou Disponível.
+    deleted: (apagado)
     edited: Artigos editados
     edited_by: 'Editado por:'
     edited_mobile: Artigos
@@ -96,7 +119,7 @@ pt-br:
       apenas um indicador raso da maturidade de um artigo.
     rating_docs:
       fa: Artigo destacado — Classificação mais alta da Wikipédia, provavelmente é
-        um artigo muito maduro para ser o projeto principal de um novo editor.
+        um artigo maduro demais para ser o projeto principal de um novo editor.
       fl: Lista destacada — a mais alta classificação da Wikipedia para listas
       a: 'Classe A: um artigo muito desenvolvido que pode ser maduro demais para ser
         o projeto principal de um editor novo'
@@ -109,19 +132,39 @@ pt-br:
       list: 'Lista: uma lista em vez de um artigo convencional'
       '?': 'Sem classificação: um artigo que ainda não foi classificado na escala
         de qualidade da Wikipédia'
+      does_not_exist: Este artigo não existe na Wikipédia
+    show_cumulative_changes: Mostrar Mudanças acumuladas
+    show_current_version: Ver versão atual
+    show_current_version_with_authorship_highlighting: Versão atual com destaque de
+      autoria
     title: Título
     title_example: Título do artigo
+    tools: Ferramentas de avaliação
     view: Ver artigo
     view_all: Ver tudo
     view_doc: A soma de todas visualizações de cada artigo durante o prazo do curso
     view_on_wiki: Ver na wiki
     views_added: '%{count} novas visualizações para %{title}'
+    edit_size: Tamanho da edição
+    wiki: Wiki
+    wp10: Integridade Estrutural
+    wp10_doc: A nota de 'Integridade Estrutural' indica o quanto um artigo se encaixa
+      no molde de um artigo maduro da Wikipédia, baseado no serviço de aprendizado
+      por máquina ORES (Serviço de Avaliação de Revisões Objetivo https://ores.wikimedia.org/
+      ). Essas notas são calculadas baseadas no tamanho de um artigo, o número de
+      referências e wikilinks e outras características básicas. Uma nota alta geralmente
+      indica que um artigo segue as convenções da Wikipédia para a estrutura de um
+      bom artigo mas não leva em conta o conteúdo em si. (Essas notas só estão disponíveis
+      para a Wikipédia em inglês.)
   assignments:
+    article: O artigo %{title} foi designado agora para ti.
     already_exists: Essa atribuição já existe!
+    title_too_large: O título não deve exceder 255 caracteres
     assignees: Assinante(s)
     assign_other: Atribuir um artigo
     add_available: Adicionar um artigo disponível
     assign_self: Atribuir um artigo a mim mesmo
+    assign_tooltip: Um artigo designado é aquele que você planeja criar ou melhorar.
     confirm_add_available: Tem certeza de que deseja adicionar %{title}?
     confirm_addition: Tem certeza que quer atribuir %{title} a %{username}?
     confirm_deletion: Você tem certeza que deseja excluir esta atribuição a um artigo?
@@ -134,16 +177,49 @@ pt-br:
     reviewers: Revisor(es)
     review_other: Atribuir uma revisão
     review_self: Revisar um artigo
+    review_tooltip: Isto é para manter registro de quais artigos planeja revisar ou
+      prover comentários.
     select: Selecionar
   blocks:
     milestones:
       title: Marco
   campaign:
+    active_campaigns: Campanhas ativas
+    add_organizer: Adicionar um organizador
+    all_campaigns: Todas as campanhas
+    already_exists: Essa campanha já existe! Por favor tente novamente com um novo
+      título ou "slug".
     campaign: Campanha
     campaigns: Campanhas
+    campaign_deleted: A campanha "%{title}" foi eliminada
+    campaign_not_updated: A campanha não pode ser atualizada
+    campaign_updated: Campanha atualizada
+    confirm_campaign_deletion: Tem certeza de que deseja excluir a campanha intitulada
+      %{title}? Se assim for, escreva o título da campanha para prosseguir.
+    confirm_campaign_deletion_failed: '"%{title}" não é o título desta campanha. A
+      campanha não foi eliminada.'
+    confirm_course_removal: Tens certeza que quer remover "%{title}" da campanha "%{campaign_title}"?
+    course_already_removed: '"%{title}" já foi removida da campanha "%{campaign_title}"'
+    course_removed: '"%{title}" foi removido da campanha "%{campaign_title}"'
+    create_campaign: Criar uma nova Campanha
+    create_my_campaign: Criar a minha Campanha!
+    description: Descrição
+    delete_campaign: Deletar essa campanha
     none: Nenhum
+    organizers: Organizadores
+    organizer_added: '%{user} é agora um(a) organizador(a) da campanha "%{title}"'
+    organizer_removed: '%{user} foi removido(a) como organizador(a) da campanha "%{title}"'
+    program_template: Modelo de Programa
+    program_template_tooltip: Quando um organizador criar um programa nessa campanha,
+      o texto nessa área será copiado como descrição na página do programa
+    title: Título
+    use_start_end_dates: Use datas de início e fim
+  chat:
+    label: Bate-papo
   courses:
     activity: Atividade
+    active_courses: '%{course_type} ativo'
+    all_courses: Todos os cursos
     already_enrolled: Você já é parte de '%{title}'!
     already_exists: Isso já existe para este curso!
     archived: Cursos arquivados
@@ -163,16 +239,21 @@ pt-br:
     character_doc: A soma dos caracteres adicionados a artigos no domínio prinicpal
       por estudantes do curso durante o prazo curso
     campaigns: 'Grupos:'
+    campaign_courses: Curso de "%{title}"
+    campaign_articles: Artigos %{title}
+    campaign_users: Editores de %{title}
     confirm_course_deletion: Tem certeza de que deseja excluir o curso intitulado
       %{title}? Se assim for, escreva o título do curso para prosseguir.
     confirm_course_deletion_failed: '"%{title}" não é o título deste curso. O curso
       não foi eliminado.'
+    course: Curso
     course_dates_calendar_instructions: Selecione datas para adicionar ou removê-las
       do calendário (por exemplo, feriados, sem aula etc). Clique na data para alternar
       entre estado selecionado, selecionado e férias. As datas das atividades do curso
       mudarão para contar semanas que não têm reuniões agendadas.
     course_description: Cursos
     courses: Cursos
+    courses_taught: Cursos ensinados
     creation_date: Data de criação
     creator:
       already_exists: Este curso já existe. Considere mudar o nome, instituição de
@@ -182,6 +263,7 @@ pt-br:
       assignment_start: Início da tarefa
       assignment_start_placeholder: Início da tarefa (AAAA-MM-DD)
       checking_for_uniqueness: Verificando se este curso é único.
+      choose_clone: Escolha um curso para duplicar
       clone_previous: Clonar curso anterior
       clone_this: Clonar este curso
       cloned_course_calendar_instructions: Selecione datas para adicioná-las ou removê-las
@@ -194,7 +276,7 @@ pt-br:
         (semanas e blocos). Alguma coisa sobre seu curso mudou? Fique à vontade para
         atualizá-lo agora.
       course_description: Descrição do curso
-      course_language: Idioma principal
+      course_language: Idioma do projeto
       course_project: Projeto principal
       course_school: Escola do curso
       course_subject: Tema do curso
@@ -218,20 +300,29 @@ pt-br:
       start_date: Data de início
       start_date_placeholder: Data de início (AAAA-MM-DD)
       subject: Tema
+      update_scheduled: Atualização agendada. Os dados serão atualizados juntos com
+        todos os outros programas no próximo ciclo de atualização. Isso geralmente
+        demora várias horas.
     current: Cursos atuais
     delete_course: Eliminar curso
     dismiss_survey: Dispensar
     dismiss_survey_confirm: Tem certeza que deseja ignorar permanentemente este questionário?
     duration: Duração do curso
+    edit_count: Editar conta
     edit_course_dates: Editar data do Curso
+    enable_chat: Ativar Bate Papo
     end: Fim
+    ended: O curso terminou.
     enroll: Inscrever-se
     enrollment: Inscrição
+    courses_enrolled: Cursos inscritos
     error:
       exists: Esse curso já existe! Por favor, tente novamente com um título, escola
         ou termo diferente.
       user_exists: Desculpe, %{username} não é um usuário existente.
       invalid_language_or_project: Idioma/projeto inválido
+      invalid_slug: Escola ou título em branco para o curso.
+      duplicate_slug: Outro programa chamado %{slug} já existe.
     expected_students: Alunos esperados
     gradeables_none: Este curso não tem atribuições graduáveis.
     instructor:
@@ -245,19 +336,28 @@ pt-br:
     join_course: Participar do curso
     join_prompt: Participar de '%{title}'?
     join_successful: Você está participando de %{title}.
+    join_failed: Inscrição falhou.
+    join_failure_details:
+      cannot_join_twice: Usuários não podem se inscrever no mesmo curso duas vezes.
+      not_yet_approved: Esse curso ainda não foi aprovado para inscrição.
+    join_details: Para entrar nesse curso, você precisa de uma senha - ou um link
+      de inscrição que inclui a senha - do instrutor. Se ainda não recebeu isto, contate
+      o seu instrutor.
     leave_confirmation: Tem certeza de que deseja sair deste curso?
     leave_course: Abandonar curso
     loading: Carregando…
     milestones_none: Este curso atualmente não tem quaisquer marcos.
     my_articles: Meus artigos
+    needs_update: Agendar atualização de dados
     new_week: Adicionar nova semana
     nocourses: Você não está participando em nenhum curso
+    nocourse: Não participou de nenhum curso.
     none: Nenhum
     notify_untrained_confirmation: Isto irá postar um lembrete nas páginas de discussão
       de todos estudantes que não completaram os módulos de treinamento. Você está
       certo que deseja fazer isso?
     no_available_actions: Não há ações disponíveis
-    overview: Visão geral
+    overview: Início
     passcode: Código de acesso
     passcode_none: Sem senha
     passcode_prompt: 'Digite a senha para entrar:'
@@ -271,6 +371,7 @@ pt-br:
     revisions_doc: Número de edições nos últimos %{timeframe} dias
     revisions_none: Este curso não tem atividade recente de edição na Wikipédia.
     school: Escola
+    school_and_term: Instituição/Quando
     start: Iniciar
     start_typing: Começar a escrever
     students: Estudantes
@@ -284,9 +385,14 @@ pt-br:
     submitted_heading: Cursos Submetidos
     submitted_note: Seu curso foi submetido. A equipe do Wiki Ed irá analisá-lo e
       entrar em contato em caso de eventuais dúvidas.
+    user_role: Função
+    course_details: Detalhes do curso
     term: Prazo
     timeline: Detalhes da atribuição
+    timeline_enabled: Cronograma ativado
     timeline_link: Linha do tempo
+    time_zone_message: Horas de início e fim são apresentadas em seu fuso-horário
+      local.
     title: Título
     training_due: O módulo de treinamento "%{title}" foi indicado para este curso
       e deve ser realizado até %{date}.
@@ -297,6 +403,7 @@ pt-br:
     untrained: Sem treinamento
     uploads_none: Esta classe não contribuiu nenhuma imagem ou outros arquivos de
       mídia no Wikimedia Commons.
+    view_other: Ver outras campanhas
     view: Ver curso
     view_doc: A soma de todas as visitas a artigos editados por editores inscritos
       desde que o editor fez sua primeira edição em cada artigo
@@ -317,45 +424,70 @@ pt-br:
       notification_message: Responda nossa pesquisa sobre este curso
       link: Responder o Questionário
   courses_generic:
+    all_courses: Todos os programas
+    archived: Programas arquivados
     articles_none: Não há ainda artigos editados neste projeto.
     assignment_end: Fim do Cronograma
     assignments_none: Este projeto não tem artigos indicados.
     assignment_start: Início do Cronograma
+    cancel: Cancelar
     courses: Programas
+    courses_taught: Programas ensinados
+    campaigns: 'Campanhas:'
+    campaign_courses: '%{title} Programas'
     creator:
       checking_for_uniqueness: Verificando se este curso é único.
+      clone_previous: Clonar programa anterior
+      clone_this: Clonar este programa
       course_description: Descrição do programa
       course_school: Instituição
       course_title: Título do programa
       create_button: Criar meu Programa!
       create_label: Criar Novo Programa
-      create_new: Criar Um Novo Programa
+      create_new: Criar um programa independente
       create_short: Criar Programa
       find: Encontrar um Programa
       intro: Exige-se o título do programa; todo o resto pode ser editado posteriormente.
         Clicar "Criar meu Programa!" para iniciar a criação a página de seu programa
         wiki.
+    delete_course: Eliminar programa
     edit_course_dates: Editar Datas do projeto
+    explore: Encontrar um Programa
     enroll: Adicionar Editor
     enrollment: Participação
+    courses_enrolled: Programas em que participou
     expected_students: Editores Esperados
     instructors: Facilitadores
+    join_course: Entrar no programa
+    join_details: Para entrar nesse programa, precisas de uma senha - ou link que
+      inclui a senha - do facilitador.
+    leave_course: Deixar o programa
     milestones_none: Este projeto não tem atualmente nenhum marco de realização.
     published: 'Este projeto foi publicado! Editores podem inscrever-se ao visitar
       a seguinte URL:'
     revisions_none: Este projeto não tem nenhuma atividade de edição recente.
     school: Instituição
+    school_and_term: Instituição/Quando
     student_editors: Editores
     students: Editores
     students_none: Este projeto não tem editores cadastrados.
     students_short: Editores
+    students_count: Número de participantes
     term: Quando
+    unsubmitted: Programas não submitidos
     uploads_none: Este projeto não contribuiu com nenhuma imagem ou outro arquivo
       de mídia no Wikimedia Commons.
+    view_other: Ver outras campanhas
+    view_page: Ver a Página do Programa
+    word_count_doc: Uma estimativa do número de palavras adicionadas em artigos do  domínio
+      principal pelos editores do programa durante a duração deste.
+    yourcourses: Seus Programas
   editable:
     edit: Editar
     cancel: Cancelar
     save: Salvar
+    edit_description: Editar descrição
+    edit_details: Editar detalhes
   metrics:
     activity: Atividade recente
     are_trained: estão em dia com o treinamento
@@ -369,6 +501,7 @@ pt-br:
     edit_count_description: Total de edições
     per_user: '%{number}/usuário'
     revisions: Edições recentes
+    tags: Etiquetas
     upload_count: Envios ao Commons
     uploads_in_use_count:
       one: arquivo usado em um artigo
@@ -379,6 +512,7 @@ pt-br:
     view_count_description: Visualizações de artigo
     view: Visitas
     word_count: Palavras Adicionadas
+    word_count_average: Número médio de palavras
   namespace:
     main: Domínio principal
     main_char_added: Caracteres adicionados ao domínio principal
@@ -410,11 +544,16 @@ pt-br:
     class: Classe
     date_time: Data/Horário
     diff: dif
+    diff_show: Exibir
+    diff_hide: Esconder
+    edit_time_span: Edições ocorreram de %{first_time} até %{last_time}
     edited_by: Editado Por
+    edited_on: Editado em %{edit_date}
     loading: Carregando revisões
     none: Este curso não tem nenhuma atividade recente de edição na Wikipédia.
     time_doc: Horário de cada revisão em seu horário local
     title: Título
+    view_on_wiki: Ver diferenças na wiki
   tasks:
     conseq: A tarefa %{task} está sendo executada!
     constant: A tarefa %{task} não pode ser executada enquanto a tarefa update_daily
@@ -468,6 +607,7 @@ pt-br:
     unable_to_add_week: Você não pode adicionar novas semanas quando seu cronograma
       está completo. Delete pelo menos uma semana ou mude as datas de sua tarefa para
       ter espaço para mais uma.
+    view_full_timeline: Ver cronologia completa
     week_number: Semana %{number}
   training:
     continue: Continuar (%{progress})
@@ -501,7 +641,9 @@ pt-br:
       aumentará este total.
     chars_added: Caracteres Adicionais<br>(espaço principal | espaço de usuários)
     contributions: Contribuições do usuário
+    contributions_history_full: Ver histórico de contribuição completa na Wikipédia
     contributions_more: Ver mais contribuições
+    contribution_statistics: Estatísticas de contribuições
     course_passcode: 'Código de acesso:'
     editors: Editores estudantes
     enroll_confirmation: Tem certeza de que deseja adicionar %{username}?
@@ -541,9 +683,26 @@ pt-br:
     training_modules_completed:
       one: '%{completed_count}/%{count} módulo de treinamento completado'
       other: '%{completed_count}/%{count} módulos de treinamento completados'
+    training_module_name: Módulo de treinamento
+    training_module_status: Status
     up_to_date_with_training: em dia com o treinamento
     username: Nome de usuário
     username_placeholder: Nome de usuário
+    role:
+      visitor: Visitante
+      student: Estudante
+      instructor: Instrutor
+      campus_volunteer: Voluntário de campus
+      online_volunteer: Voluntário online
+      wiki_ed_staff: Equipe Wiki Ed
+  user_profiles:
+    student_impact: Impacto total feito pelo usuário %{username} como estudante
+    instructor_impact: Impacto total de %{username} como instrutor
+    instructors_student_impact: Impacto total dos estudantes de %{username}
+    disclaimer: Informações que prover estará disponível publicamente
+    bio_placeholder: Adicione sua Biografia (opcional)
+    location_placeholder: Adicione a sua localização (opcional)
+    institution_placeholder: Nome da instituição (opcional)
   wiki_edits:
     notify_overdue:
       confirm: Isto irá postar um lembrete nas páginas de discussão de todos os estudantes
@@ -570,6 +729,7 @@ pt-br:
     min_weeks: Esta tarefa requer pelo menos %{min_weeks} semanas disponíveis. Por
       favor ajuste as datas de início e fim da tarefa se quiser usar esse tipo de
       tarefa.
+    select_one_option: Por favor, selecione uma opção.
     minimum_options:
       one: Por favor selecione %{count} ou mais opções.
       other: Por favor selecione %{count} ou mais opções.
@@ -583,7 +743,11 @@ pt-br:
   error:
     form_errors: Por favor, verifique o formulário de erros.
     invalid_assignment: Tarefa inválida
+    invalid_date: A data %{key} é inválida
+    invalid_file_format: O arquivo não pôde ser salvo. Por favor, envie um documento
+      PDF ou Word.
     oauth_invalid: Sua sessão na Wikipedia se expirou. Por favor, entre novamente.
+    start_date_before_end_date: Data de início deve ser anterior a data de fim
     unsupported_browser:
       header: Navegador sem suporte. :-(
       explanation: Você está usando um navegador que não é compatível com o painel
@@ -645,4 +809,6 @@ pt-br:
       message: Isto é um lembrete sobre o questionário de seu curso, %{course_title}.
         Comentários recebidos neste questionário nos ajudam a aperfeiçoar nosso suporte
         a tarefas na Wikipédia como a sua.
+  feedback_form_responses:
+    no_responses: Não há comentários/repostas ainda.
 ...

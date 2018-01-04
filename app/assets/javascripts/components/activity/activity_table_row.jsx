@@ -1,45 +1,37 @@
 import React from 'react';
-import UIStore from '../../stores/ui_store.js';
-import UIActions from '../../actions/ui_actions.js';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import DiffViewer from '../revisions/diff_viewer.jsx';
 
-const ActivityTableRow = React.createClass({
+const ActivityTableRow = createReactClass({
   displayName: 'ActivityTableRow',
 
   propTypes: {
-    rowId: React.PropTypes.number,
-    diffUrl: React.PropTypes.string,
-    revisionDateTime: React.PropTypes.string,
-    reportUrl: React.PropTypes.string,
-    revisionScore: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
+    rowId: PropTypes.number,
+    diffUrl: PropTypes.string,
+    revisionDateTime: PropTypes.string,
+    reportUrl: PropTypes.string,
+    revisionScore: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
     ]),
-    articleUrl: React.PropTypes.string,
-    talkPageLink: React.PropTypes.string,
-    author: React.PropTypes.string,
-    title: React.PropTypes.string,
-    revision: React.PropTypes.object
-  },
-
-  mixins: [UIStore.mixin],
-
-  getInitialState() {
-    return { is_open: false };
-  },
-
-  storeDidChange() {
-    return this.setState({ is_open: UIStore.getOpenKey() === `drawer_${this.props.rowId}` });
+    articleUrl: PropTypes.string,
+    talkPageLink: PropTypes.string,
+    author: PropTypes.string,
+    title: PropTypes.string,
+    revision: PropTypes.object,
+    isOpen: PropTypes.bool,
+    toggleDrawer: PropTypes.func
   },
 
   openDrawer() {
-    return UIActions.open(`drawer_${this.props.rowId}`);
+    return this.props.toggleDrawer(`drawer_${this.props.rowId}`);
   },
 
   render() {
     let revisionDateTime;
     let col2;
-    const className = this.state.is_open ? 'open' : 'closed';
+    const className = this.props.isOpen ? 'open' : 'closed';
 
     if (this.props.diffUrl) {
       revisionDateTime = (

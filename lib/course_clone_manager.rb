@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #= Procedures for creating a duplicate of an existing course for reuse
 class CourseCloneManager
   def initialize(course, user)
@@ -15,13 +16,18 @@ class CourseCloneManager
     clear_meeting_days_and_due_dates
     set_instructor
     tag_course
+    copy_campaigns if Features.open_course_creation?
     return @clone
+  # If a course with the new slug already exists — an incomplete clone of the
+  # same course — then return the previously-created clone.
+  rescue ActiveRecord::RecordNotUnique
+    return Course.find_by(slug: @clone.slug)
   end
 
   private
 
   def set_placeholder_start_and_end_dates
-    # The datepickers require an ititial date, so we set these to today's date
+    # The datepickers require an initial date, so we set these to today's date
     today = Time.zone.today
     @clone.start = today
     @clone.end = today
@@ -35,6 +41,7 @@ class CourseCloneManager
     @clone.slug = course_slug(@clone)
     @clone.passcode = Course.generate_passcode
     @clone.submitted = false
+    @clone.flags = {}
     # If a legacy course is cloned, switch the type to ClassroomProgramCourse.
     @clone.type = 'ClassroomProgramCourse' if @clone.legacy?
     @clone.save!
@@ -70,7 +77,12 @@ class CourseCloneManager
   end
 
   def set_instructor
-    CoursesUsers.create!(course_id: @clone.id, user_id: @user.id, role: 1)
+    # Creating a course is analogous to self-enrollment; it is intentional on the
+    # part of the user, so we associate the real name with the course.
+    JoinCourse.new(user: @user,
+                   course: @clone,
+                   role: CoursesUsers::Roles::INSTRUCTOR_ROLE,
+                   real_name: @user.real_name)
   end
 
   TAG_KEYS_TO_CARRY_OVER = ['tricky_topic_areas'].freeze
@@ -81,6 +93,12 @@ class CourseCloneManager
     @course.tags.each do |tag|
       next unless TAG_KEYS_TO_CARRY_OVER.include?(tag.key)
       tag_manager.add(tag: tag.tag, key: tag.key)
+    end
+  end
+
+  def copy_campaigns
+    @course.campaigns.each do |campaign|
+      CampaignsCourses.create(course: @clone, campaign: campaign)
     end
   end
 

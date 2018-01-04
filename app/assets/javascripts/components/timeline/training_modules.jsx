@@ -1,14 +1,17 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+import _ from 'lodash';
 
-const TrainingModules = React.createClass({
+const TrainingModules = createReactClass({
   displayName: 'TrainingModules',
 
   propTypes: {
-    block_modules: React.PropTypes.array,
-    editable: React.PropTypes.bool,
-    all_modules: React.PropTypes.array,
-    onChange: React.PropTypes.func
+    block_modules: PropTypes.array,
+    editable: PropTypes.bool,
+    all_modules: PropTypes.array,
+    onChange: PropTypes.func
   },
 
   getInitialState() {
@@ -103,7 +106,7 @@ const TrainingModules = React.createClass({
           <td className="block__training-modules-table__module-link">
             <a className={module.module_progress} href={link}>
               {linkText}
-              <i className={iconClassName}></i>
+              <i className={iconClassName} />
             </a>
           </td>
         </tr>

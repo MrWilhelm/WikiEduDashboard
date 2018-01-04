@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 course_meetings_manager = CourseMeetingsManager.new(course)
 
 json.weeks course.weeks.eager_load(blocks: [:gradeable]) do |week|
@@ -12,7 +13,7 @@ json.weeks course.weeks.eager_load(blocks: [:gradeable]) do |week|
   json.end_date_raw start_date.present? ? start_date.end_of_week(:sunday) : nil
   json.start_date start_date.present? ? start_date.strftime('%m/%d') : nil
   json.end_date start_date.present? ? start_date.end_of_week(:sunday).strftime('%m/%d') : nil
-  json.blocks week.blocks.order(:order) do |block|
+  json.blocks week.blocks do |block|
     json.call(block, :id, :kind, :content, :week_id,
               :gradeable_id, :title, :order, :due_date,
               :training_module_ids)
@@ -22,6 +23,10 @@ json.weeks course.weeks.eager_load(blocks: [:gradeable]) do |week|
     end
     if block.training_modules.any?
       json.training_modules block.training_modules do |tm|
+        # The available training modules may change over time, especially on
+        # Programs & Events Dashboard where wiki trainings are enabled.
+        # For modules that aren't found, simply skip sending info.
+        next unless tm
         progress_manager = TrainingProgressManager.new(current_user, tm)
         due_date_manager = TrainingModuleDueDateManager.new(
           course: course,

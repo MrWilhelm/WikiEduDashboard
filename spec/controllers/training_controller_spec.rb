@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe TrainingController do
@@ -18,8 +19,8 @@ describe TrainingController do
     end
     context 'not a real library' do
       let(:library_id) { 'lolnotareallibrary' }
-      it 'raises a record not found error' do
-        expect { subject }.to raise_error ActiveRecord::RecordNotFound
+      it 'raises a module not found error' do
+        expect { subject }.to raise_error TrainingController::ModuleNotFound
       end
     end
   end
@@ -41,8 +42,38 @@ describe TrainingController do
     end
     context 'not a real module' do
       let(:module_id) { 'lolnotarealmodule' }
-      it 'raises a record not found error' do
-        expect { subject }.to raise_error ActiveRecord::RecordNotFound
+      it 'raises a module not found error' do
+        expect { subject }.to raise_error TrainingController::ModuleNotFound
+      end
+    end
+  end
+
+  describe '#reload' do
+    context 'for all modules' do
+      let(:subject) { get :reload, params: { module: 'all' } }
+      it 'returns the result upon success' do
+        subject
+        expect(response.body).to have_content 'done!'
+      end
+
+      it 'displays an error message upon failure' do
+        allow(TrainingBase).to receive(:load_all)
+          .and_raise(TrainingBase::DuplicateIdError, 'oh noes!')
+        subject
+        expect(response.body).to have_content 'oh noes!'
+      end
+    end
+
+    context 'for a single module' do
+      let(:subject) { get :reload, params: { module: 'images-and-media' } }
+      it 'returns the result upon success' do
+        subject
+        expect(response.body).to have_content 'done!'
+      end
+
+      it 'displays an error message if the module does not exist' do
+        get :reload, params: { module: 'image-and-medium' }
+        expect(response.body).to have_content 'No module'
       end
     end
   end

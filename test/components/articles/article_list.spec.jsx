@@ -1,7 +1,7 @@
 import '../../testHelper';
 
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 
 import ArticleList from '../../../app/assets/javascripts/components/articles/article_list.jsx';
 
@@ -45,7 +45,7 @@ describe('ArticleList', () => {
 
     const TestArticle = ReactTestUtils.renderIntoDocument(
       <div>
-        <ArticleList articles={articles} course={{ home_wiki: {} }} />
+        <ArticleList articles={articles} course={{ home_wiki: {} }} store={reduxStore} />
       </div>
     );
 

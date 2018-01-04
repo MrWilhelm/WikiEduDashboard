@@ -1,27 +1,27 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/revision_data_parser"
 
 #= Fetches wiki revision data from an endpoint that provides SQL query
 #= results from a replica wiki database on wmflabs:
-#=   http://tools.wmflabs.org/wikiedudashboard
+#=   https://tools.wmflabs.org/wikiedudashboard
 #= For what's going on at the other end, see:
 #=   https://github.com/WikiEducationFoundation/WikiEduDashboardTools
 class Replica
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
     @wiki = wiki
   end
 
   # This is the maximum number of concurrent queries the system should run
   # against the wmflabs replica endpoint.
-  CONCURRENCY_LIMIT = 3
+  CONCURRENCY_LIMIT = 10
 
   ################
   # Entry points #
   ################
 
   # Given a list of users and a start and end date, return a nicely formatted
-  # array of revisions made by those users between those dates.
+  # hash of page_ids and revisions made by those users between those dates.
   def get_revisions(users, rev_start, rev_end)
     raw = get_revisions_raw(users, rev_start, rev_end)
     @data = {}
@@ -42,16 +42,6 @@ class Replica
     oauth_tags = oauth_tags.blank? ? oauth_tags : "&#{oauth_tags}"
     query = user_list + oauth_tags + "&start=#{rev_start}&end=#{rev_end}"
     api_get('revisions.php', query)
-  end
-
-  # Given a list of users, fetch their global_id and trained status. Completion
-  # of training is defined by the users.php endpoint as having made an edit
-  # to a specific page on Wikipedia:
-  # [[Wikipedia:Training/For students/Training feedback]]
-  def get_user_info(users)
-    query = compile_usernames_query(users)
-    query = "#{query}&training_page_id=#{ENV['training_page_id']}" if ENV['training_page_id']
-    api_get('users.php', query)
   end
 
   # Given a list of articles *or* hashes of the form { 'mw_page_id' => 1234 },
@@ -99,17 +89,11 @@ class Replica
   # API methods #
   ###############
 
-  # Given an endpoint (either 'users.php' or 'revisions.php') and a
+  # Given an endpoint ('articles.php' or 'revisions.php') and a
   # query appropriate to that endpoint, return the parsed json response.
   #
-  # Example users.php query with 2 users:
-  #   http://tools.wmflabs.org/wikiedudashboard/users.php?user_ids[0]=012345&user_ids[1]=678910
-  # Example users.php parsed response with 2 users:
-  # [{"id"=>"123", "wiki_id"=>"User_A", "global_id"=>"8675309", trained: 1},
-  #  {"id"=>"6789", "wiki_id"=>"User_B", "global_id"=>"9035768", trained: 0}]
-  #
   # Example revisions.php query:
-  #   http://tools.wmflabs.org/wikiedudashboard/revisions.php?user_ids[0]=%27Example_User%27&user_ids[1]=%27Ragesoss%27&user_ids[2]=%27Sage%20(Wiki%20Ed)%27&start=20150105&end=20150108
+  #   https://tools.wmflabs.org/wikiedudashboard/revisions.php?lang=en&project=wikipedia&usernames[]=Ragesoss&start=20140101003430&end=20171231003430
   #
   # Example revisions.php parsed response:
   # [{"page_id"=>"44962463",
@@ -150,9 +134,21 @@ class Replica
     Net::HTTP::get(URI.parse(url))
   end
 
+  # Query URL for the WikiEduDashboardTools repository
   def compile_query_url(endpoint, query)
-    base_url = 'http://tools.wmflabs.org/wikiedudashboard/'
-    "#{base_url}#{endpoint}?lang=#{@wiki.language}&project=#{@wiki.project}&#{query}"
+    base_url = 'https://tools.wmflabs.org/wikiedudashboard/'
+    "#{base_url}#{endpoint}?#{project_database_params}&#{query}"
+  end
+
+  SPECIAL_DB_NAMES = { 'www.wikidata.org' => 'wikidatawiki',
+                       'wikisource.org' => 'sourceswiki',
+                       'incubator.wikimedia.org' => 'incubatorwiki' }.freeze
+  def project_database_params
+    # Returns special Labs database names as parameters for databases not meeting
+    # project/language naming conventions
+    return "db=#{SPECIAL_DB_NAMES[@wiki.domain]}" if SPECIAL_DB_NAMES[@wiki.domain]
+    # Otherwise, uses the language and project, and replica API infers the standard db name.
+    "lang=#{@wiki.language}&project=#{@wiki.project}"
   end
 
   def compile_usernames_query(users)
@@ -186,17 +182,15 @@ class Replica
     { revision_ids: revisions.map(&:mw_rev_id) }.to_query
   end
 
+  # These are typical network errors that we expect to encounter.
+  TYPICAL_ERRORS = [Errno::ETIMEDOUT, Net::ReadTimeout, Errno::ECONNREFUSED,
+                    JSON::ParserError].freeze
   def report_exception(error, endpoint, query, level='error')
     Rails.logger.error "replica.rb #{endpoint} query failed after 3 tries: #{error}"
-    level = 'warning' if typical_errors.include?(error.class)
+    level = 'warning' if TYPICAL_ERRORS.include?(error.class)
     Raven.capture_exception error, level: level, extra: {
       query: query, endpoint: endpoint, language: @wiki.language, project: @wiki.project
     }
     return nil
-  end
-
-  # These are typical network errors that we expect to encounter.
-  def typical_errors
-    [Errno::ETIMEDOUT, Net::ReadTimeout, Errno::ECONNREFUSED, JSON::ParserError]
   end
 end

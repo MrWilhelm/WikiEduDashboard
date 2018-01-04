@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module SurveysHelper
   include CourseHelper
 
@@ -177,7 +178,7 @@ module SurveysHelper
 
   def course_article_choices(course)
     course.articles.collect do |a|
-      [a.id, a.title, "<a href='#{article_url(a)}' target='_blank'>#{a.title}</a>"]
+      [a.id, a.title, "<a href='#{a.url}' target='_blank'>#{a.title}</a>"]
     end
   end
 

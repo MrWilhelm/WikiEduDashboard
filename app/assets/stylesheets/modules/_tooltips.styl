@@ -21,7 +21,7 @@
     min-width 150px;
     background-color white
     border 1px solid manatee
-    display none
+    display block
     opacity 0
     padding 10px 15px
     pointer-events none
@@ -32,8 +32,16 @@
     transition opacity .2s linear, top .2s linear
     white-space normal
     z-index 4
-    +above(desktop)
-      display block
+    &.tooltip-center
+      left -145%
+      min-width 200px !important
+      &:before
+        margin-left 36% !important
+    &.large
+      min-width 320px
+      p
+        color $text
+        font-size 14px
     &.dark
       background-color manatee
       border 0
@@ -55,9 +63,20 @@
       display block
       margin-left -6px
       position absolute
+
     h4
       color dove
     p
       color manatee
       font-size 11px
       line-height 1.4
+
+@media only screen and (max-width: 500px)
+  .tooltip-trigger
+    .tooltip
+      padding 2px 2px
+      left unset
+      &.large
+        min-width 120px
+        p
+          font-size 10px

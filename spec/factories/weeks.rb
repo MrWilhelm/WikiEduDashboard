@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: weeks
@@ -11,7 +12,7 @@
 #  order      :integer          default(1), not null
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :week do
   end
 end

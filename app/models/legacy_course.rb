@@ -41,11 +41,19 @@
 #  home_wiki_id          :integer
 #  recent_revision_count :integer          default(0)
 #  needs_update          :boolean          default(FALSE)
+#  chatroom_id           :string(255)
+#  flags                 :text(65535)
+#  level                 :string(255)
+#  private               :boolean          default(FALSE)
 #
 
 # Course type for courses imported from the MediaWiki EducationProgram extension
 class LegacyCourse < Course
   def wiki_edits_enabled?
+    false
+  end
+
+  def wiki_course_page_enabled?
     false
   end
 
@@ -65,5 +73,9 @@ class LegacyCourse < Course
 
   def multiple_roles_allowed?
     true
+  end
+
+  def passcode_required?
+    false
   end
 end

@@ -1,12 +1,15 @@
 # frozen_string_literal: true
+
 require 'action_view'
 require "#{Rails.root}/lib/data_cycle/constant_update"
 require "#{Rails.root}/lib/data_cycle/daily_update"
 require "#{Rails.root}/lib/data_cycle/survey_update"
+require "#{Rails.root}/lib/data_cycle/views_update"
 
 namespace :batch do
   desc 'Constant data updates'
   task update_constantly: :environment do
+    Rails.application.eager_load!
     ConstantUpdate.new
   end
 
@@ -15,9 +18,15 @@ namespace :batch do
     DailyUpdate.new
   end
 
-  desc 'Survey update'
+  desc 'Survey updates'
   task survey_update: :environment do
     SurveyUpdate.new
+  end
+
+  desc 'View import updates'
+  task update_views: :environment do
+    Rails.application.eager_load!
+    ViewsUpdate.new
   end
 
   desc 'Pause updates'

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 MILESTONE_BLOCK_KIND = 2
@@ -29,6 +30,7 @@ course_end = '2015-12-31'
 describe 'the course page', type: :feature, js: true do
   let(:es_wiktionary) { create(:wiki, language: 'es', project: 'wiktionary') }
   before do
+    stub_wiki_validation
     page.current_window.resize_to(1920, 1080)
 
     course = create(:course,
@@ -225,7 +227,7 @@ describe 'the course page', type: :feature, js: true do
   end
 
   describe 'articles edited view' do
-    it 'should display a list of articles, and sort articles by class' do
+    it 'displays a list of articles, and sort articles by class' do
       js_visit "/courses/#{slug}/articles"
       # List of articles
       sleep 1
@@ -241,11 +243,12 @@ describe 'the course page', type: :feature, js: true do
       find('th.sortable', text: 'Class').click
       new_first_rating = page.first(:css, 'table.articles').first('td .rating p')
       expect(new_first_rating).to have_content '-'
-      title = page.first(:css, 'table.articles').first('td p.title')
+      title = page.first(:css, 'table.articles').first('td .title')
       expect(title).to have_content 'es:wiktionary:Article'
     end
 
-    it 'should have a list of available articles' do
+    it 'includes a list of available articles' do
+      stub_info_query
       course = Course.first
       wiki = Wiki.first
       AssignmentManager.new(user_id: nil,
@@ -259,13 +262,13 @@ describe 'the course page', type: :feature, js: true do
       expect(assigned_articles_section).to have_content 'Education'
     end
 
-    it 'should not have an "Add an available article" button for students' do
+    it 'does not show an "Add an available article" button for students' do
       js_visit "/courses/#{slug}/articles"
       expect(page).not_to have_content 'Available Articles'
       expect(page).to_not have_content 'Add an available article'
     end
 
-    it 'should have an "Add an available article" button for instructors/admins' do
+    it 'shows an "Add an available article" button for instructors/admins' do
       admin = create(:admin, id: User.last.id + 1)
       login_as(admin)
       js_visit "/courses/#{slug}/articles"
@@ -274,7 +277,8 @@ describe 'the course page', type: :feature, js: true do
       expect(assigned_articles_section).to have_content 'Add an available article'
     end
 
-    it 'should allow instructor to add an available article' do
+    it 'allow instructor to add an available article' do
+      stub_info_query
       admin = create(:admin, id: User.last.id + 1)
       login_as(admin)
       stub_oauth_edit
@@ -288,7 +292,9 @@ describe 'the course page', type: :feature, js: true do
       expect(assigned_articles_table).to have_content 'Education'
     end
 
-    it 'should allow instructor to remove an available article' do
+    it 'allows instructor to remove an available article' do
+      stub_info_query
+      stub_raw_action
       Assignment.destroy_all
       sleep 1
       admin = create(:admin, id: User.last.id + 1)
@@ -313,29 +319,32 @@ describe 'the course page', type: :feature, js: true do
       # expect(Assignment.count).to eq(0)
     end
 
-    it 'should allow student to select an available article' do
-      user = create(:user, id: user_count + 100)
-      course = Course.first
-      create(:courses_user, course_id: course.id, user_id: user.id,
-                            role: CoursesUsers::Roles::STUDENT_ROLE)
-      wiki = Wiki.first
-      AssignmentManager.new(user_id: nil,
-                            course: course,
-                            wiki: wiki,
-                            title: 'Education',
-                            role: 0).create_assignment
+    it 'allows student to select an available article' do
+      VCR.use_cassette 'assigned_articles_item' do
+        stub_info_query
+        user = create(:user, id: user_count + 100)
+        course = Course.first
+        create(:courses_user, course_id: course.id, user_id: user.id,
+                              role: CoursesUsers::Roles::STUDENT_ROLE)
+        wiki = Wiki.first
+        AssignmentManager.new(user_id: nil,
+                              course: course,
+                              wiki: wiki,
+                              title: 'Education',
+                              role: 0).create_assignment
 
-      login_as(user, scope: :user)
-      js_visit "/courses/#{slug}/articles"
-      expect(page).to have_content 'Available Articles'
-      assigned_articles_section = page.first(:css, '#available-articles')
-      expect(assigned_articles_section).to have_content 'Education'
-      expect(Assignment.count).to eq(1)
-      expect(assigned_articles_section).to have_content 'Select'
-      click_button 'Select'
-      sleep 1
-      expect(Assignment.first.user_id).to eq(user.id)
-      expect(Assignment.first.role).to eq(0)
+        login_as(user, scope: :user)
+        js_visit "/courses/#{slug}/articles"
+        expect(page).to have_content 'Available Articles'
+        assigned_articles_section = page.first(:css, '#available-articles')
+        expect(assigned_articles_section).to have_content 'Education'
+        expect(Assignment.count).to eq(1)
+        expect(assigned_articles_section).to have_content 'Select'
+        click_button 'Select'
+        sleep 1
+        expect(Assignment.first.user_id).to eq(user.id)
+        expect(Assignment.first.role).to eq(0)
+      end
     end
   end
 
@@ -394,11 +403,7 @@ describe 'the course page', type: :feature, js: true do
       login_as(user, scope: :user)
       stub_oauth_edit
 
-      Dir["#{Rails.root}/lib/importers/*.rb"].each { |file| require file }
-      allow(UserImporter).to receive(:update_users)
       allow(CourseRevisionUpdater).to receive(:import_new_revisions)
-      allow(ViewImporter).to receive(:update_views)
-      allow(RatingImporter).to receive(:update_ratings)
 
       visit "/courses/#{slug}/manual_update"
       js_visit "/courses/#{slug}"

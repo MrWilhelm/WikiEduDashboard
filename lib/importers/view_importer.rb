@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "#{Rails.root}/lib/wiki_pageviews"
 
 #= Imports and updates views for articles, revisions, and join tables
@@ -8,14 +9,16 @@ class ViewImporter
   ################
   def self.update_all_views(all_time=false)
     articles = Article.current
-                      .where(articles: { namespace: 0 })
+                      .where(namespace: 0)
+                      .includes(:wiki)
                       .find_in_batches(batch_size: 30)
     update_views(articles, all_time)
   end
 
   def self.update_new_views
     articles = Article.current
-                      .where(articles: { namespace: 0 })
+                      .where(namespace: 0)
+                      .includes(:wiki)
                       .where('views_updated_at IS NULL')
                       .find_in_batches(batch_size: 30)
     update_views(articles, true)
@@ -81,17 +84,13 @@ class ViewImporter
 
     add_views_to_revisions(article, views)
     update_views_updated_at(article, views)
-
-    if article.revisions.any?
-      article.views = article.revisions.order('date ASC').first.views
-    end
-    article.save
   end
 
   def update_views_updated_at(article, views)
     since = views_since_when(article)
     last = views_last_updated(since, views)
     article.views_updated_at = last.nil? ? article.views_updated_at : last
+    article.save
   end
 
   def views_since_when(article)

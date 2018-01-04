@@ -1,15 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import ArticleList from './article_list.jsx';
 import UIActions from '../../actions/ui_actions.js';
 import AssignmentList from '../assignments/assignment_list.jsx';
 import ServerActions from '../../actions/server_actions.js';
 import AvailableArticles from '../articles/available_articles.jsx';
+import CourseOresPlot from './course_ores_plot.jsx';
+import CategoryHandler from '../categories/category_handler.jsx';
 
-const ArticlesHandler = React.createClass({
+const ArticlesHandler = createReactClass({
   displayName: 'ArticlesHandler',
 
   propTypes: {
-    course_id: React.PropTypes.string
+    course_id: PropTypes.string,
+    current_user: PropTypes.object,
+    course: PropTypes.object
   },
 
   componentWillMount() {
@@ -22,11 +28,35 @@ const ArticlesHandler = React.createClass({
   },
 
   render() {
+    // FIXME: These props should be required, and this component should not be
+    // mounted in the first place if they are not available.
+    if (!this.props.course || !this.props.course.home_wiki) { return <div />; }
+
+    let header;
+    if (Features.wikiEd) {
+      header = <h3 className="tooltip-trigger">{I18n.t('metrics.articles_edited')}</h3>;
+    } else {
+      header = (
+        <h3 className="tooltip-trigger">{I18n.t('metrics.articles_edited')}
+          <span className="tooltip-indicator" />
+          <div className="tooltip dark">
+            <p>{I18n.t('articles.cross_wiki_tracking')}</p>
+          </div>
+        </h3>
+      );
+    }
+
+   let categories;
+   if (this.props.course.type === 'ArticleScopedProgram') {
+     categories = <CategoryHandler course={this.props.course} current_user={this.props.current_user} />;
+   }
+
     return (
       <div>
         <div id="articles">
           <div className="section-header">
-            <h3>{I18n.t('metrics.articles_edited')}</h3>
+            {header}
+            <CourseOresPlot course={this.props.course} />
             <div className="sort-select">
               <select className="sorts" name="sorts" onChange={this.sortSelect}>
                 <option value="rating_num">{I18n.t('articles.rating')}</option>
@@ -45,6 +75,7 @@ const ArticlesHandler = React.createClass({
           <AssignmentList {...this.props} />
         </div>
         <AvailableArticles {...this.props} />
+        {categories}
       </div>
     );
   }

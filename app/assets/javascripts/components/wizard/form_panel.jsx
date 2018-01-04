@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import Panel from './panel.jsx';
 import DatePicker from '../common/date_picker.jsx';
 import Calendar from '../common/calendar.jsx';
@@ -7,12 +8,12 @@ import CourseActions from '../../actions/course_actions.js';
 import CourseDateUtils from '../../utils/course_date_utils.js';
 import ValidationStore from '../../stores/validation_store.js';
 
-const FormPanel = React.createClass({
+const FormPanel = createReactClass({
   displayName: 'FormPanel',
 
   propTypes: {
-    course: React.PropTypes.object.isRequired,
-    shouldShowSteps: React.PropTypes.bool
+    course: PropTypes.object.isRequired,
+    shouldShowSteps: PropTypes.bool
   },
 
   setAnyDatesSelected(bool) {
@@ -23,7 +24,7 @@ const FormPanel = React.createClass({
     return this.setState({ blackoutDatesSelected: bool });
   },
   setNoBlackoutDatesChecked() {
-    const { checked } = ReactDOM.findDOMNode(this.refs.noDates);
+    const { checked } = this.noDates;
     const toPass = this.props.course;
     toPass.no_day_exceptions = checked;
     return CourseActions.updateCourse(toPass);
@@ -109,7 +110,8 @@ const FormPanel = React.createClass({
         </div>
         <hr />
         <div className="wizard__form course-dates course-dates__step">
-          <Calendar course={this.props.course}
+          <Calendar
+            course={this.props.course}
             editable={true}
             save={true}
             setAnyDatesSelected={this.setAnyDatesSelected}
@@ -117,14 +119,15 @@ const FormPanel = React.createClass({
             calendarInstructions= {I18n.t('wizard.calendar_instructions')}
           />
           <label> I have no class holidays
-            <input type="checkbox" onChange={this.setNoBlackoutDatesChecked} ref="noDates" />
+            <input type="checkbox" onChange={this.setNoBlackoutDatesChecked} ref={(checkbox) => {this.noDates = checkbox;}} />
           </label>
         </div>
       </div>
     );
 
     return (
-      <Panel {...this.props}
+      <Panel
+        {...this.props}
         raw_options={rawOptions}
         nextEnabled={this.nextEnabled}
         saveCourse={this.saveCourse}

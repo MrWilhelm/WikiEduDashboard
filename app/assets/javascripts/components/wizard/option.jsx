@@ -1,17 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 const md = require('../../utils/markdown_it.js').default();
 import WizardActions from '../../actions/wizard_actions.js';
 
-const Option = React.createClass({
+const Option = createReactClass({
   displayName: 'Option',
 
   propTypes: {
-    index: React.PropTypes.number.isRequired,
-    panel_index: React.PropTypes.number.isRequired,
-    option: React.PropTypes.object.isRequired,
-    open_weeks: React.PropTypes.number.isRequired,
-    multiple: React.PropTypes.bool
+    index: PropTypes.number.isRequired,
+    panel_index: PropTypes.number.isRequired,
+    option: PropTypes.object.isRequired,
+    open_weeks: PropTypes.number.isRequired,
+    multiple: PropTypes.bool
   },
 
   select() {
@@ -19,7 +20,7 @@ const Option = React.createClass({
   },
 
   expand() {
-    $(ReactDOM.findDOMNode(this.refs.expandable)).slideToggle();
+    $(this.expandable).slideToggle();
     return WizardActions.toggleOptionExpanded(this.props.panel_index, this.props.index);
   },
 
@@ -30,7 +31,7 @@ const Option = React.createClass({
     if (disabled) { className += ' disabled'; }
 
     let checkbox;
-    if (this.props.multiple) { checkbox = <div className="wizard__option__checkbox"></div>; }
+    if (this.props.multiple) { checkbox = <div className="wizard__option__checkbox" />; }
 
     let expand;
     let expandLink;
@@ -44,8 +45,8 @@ const Option = React.createClass({
         moreClassName += ' open';
       }
       expand = (
-        <div className={expandClassName} ref="expandable">
-          <div dangerouslySetInnerHTML={{ __html: md.render(this.props.option.description) }}></div>
+        <div className={expandClassName} ref={(div) => this.expandable = div}>
+          <div dangerouslySetInnerHTML={{ __html: md.render(this.props.option.description) }} />
         </div>
       );
       expandLink = (
@@ -56,7 +57,7 @@ const Option = React.createClass({
     let blurb;
     if (this.props.option.blurb) {
       blurb = (
-        <div dangerouslySetInnerHTML={{ __html: md.render(this.props.option.blurb) }}></div>
+        <div dangerouslySetInnerHTML={{ __html: md.render(this.props.option.blurb) }} />
       );
     }
 
@@ -84,7 +85,7 @@ const Option = React.createClass({
           {expand}
         </button>
         {expandLink}
-        <div className="wizard__option__border"></div>
+        <div className="wizard__option__border" />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: blocks
@@ -16,7 +17,7 @@
 #  training_module_ids :text(65535)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :block do
     kind Block::KINDS['assignment']
     content 'MyString'

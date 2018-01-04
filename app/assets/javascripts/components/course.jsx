@@ -1,35 +1,44 @@
 import React from 'react';
-import { Link } from 'react-router';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import CourseLink from './common/course_link.jsx';
+import Confirm from './common/confirm.jsx';
 import ServerActions from '../actions/server_actions.js';
 import CourseActions from '../actions/course_actions.js';
 import CourseStore from '../stores/course_store.js';
 import UserStore from '../stores/user_store.js';
-import NotificationStore from '../stores/notification_store.js';
+import WeekStore from '../stores/week_store.js';
 import Affix from './common/affix.jsx';
 import CourseUtils from '../utils/course_utils.js';
-import GetHelpButton from '../components/common/get_help_button.jsx';
+import UserUtils from '../utils/user_utils.js';
 import EnrollCard from './enroll/enroll_card.jsx';
+import CourseNavbar from './common/course_navbar.jsx';
+import Notifications from './common/notifications.jsx';
 
 const getState = function () {
   const current = $('#react_root').data('current_user');
   const cu = UserStore.getFiltered({ id: current.id })[0];
+  let currentUser = cu || current;
+  const userRoles = UserUtils.userRoles(currentUser, UserStore);
+  currentUser = { ...currentUser, ...userRoles };
   return {
     course: CourseStore.getCourse(),
-    current_user: cu || current
+    current_user: currentUser,
+    weeks: WeekStore.getWeeks()
   };
 };
 
-const Course = React.createClass({
+const Course = createReactClass({
   displayName: 'Course',
 
   propTypes: {
-    params: React.PropTypes.object,
-    location: React.PropTypes.object,
-    children: React.PropTypes.node
+    params: PropTypes.object,
+    location: PropTypes.object,
+    children: PropTypes.node,
+    current_user: PropTypes.object
   },
 
-  mixins: [CourseStore.mixin, UserStore.mixin, NotificationStore.mixin],
+  mixins: [CourseStore.mixin, UserStore.mixin, WeekStore.mixin],
 
   getInitialState() {
     return getState();
@@ -45,13 +54,11 @@ const Course = React.createClass({
     const { params } = this.props;
     return `${params.course_school}/${params.course_title}`;
   },
-  getCurrentUser() {
-    return this.state.current_user;
-  },
 
   storeDidChange() {
     return this.setState(getState());
   },
+
   submit(e) {
     e.preventDefault();
     if (!confirm(I18n.t('courses.warn_mirrored'))) { return; }
@@ -59,88 +66,76 @@ const Course = React.createClass({
     toPass.submitted = true;
     return CourseActions.updateCourse(toPass, true);
   },
-  _courseLinkParams() {
-    return `/courses/${this.props.params.course_school}/${this.props.params.course_title}`;
-  },
-  _onCourseIndex() {
-    return this.props.location.pathname.split('/').length === 4;
-  },
+
   dismissSurvey(surveyNotificationId) {
     if (confirm(I18n.t('courses.dismiss_survey_confirm'))) {
       return CourseActions.dismissNotification(surveyNotificationId);
     }
   },
+
+  _courseLinkParams() {
+    return `/courses/${this.props.params.course_school}/${this.props.params.course_title}`;
+  },
+
   render() {
+    const courseId = this.getCourseID();
+    if (!courseId || !this.state.course || !this.state.course.home_wiki) { return <div />; }
+
     const alerts = [];
-
-    let courseLink;
-    if (this.state.course.url) {
-      courseLink = (
-        <a href={this.state.course.url} target="_blank">
-          <h2 className="title">{this.state.course.title}</h2>
-        </a>
-      );
-    } else {
-      courseLink = <a><h2 className="title">{this.state.course.title}</h2></a>;
-    }
-
-    let userObject;
-    if (this.getCurrentUser().id) {
-      userObject = UserStore.getFiltered({ id: this.getCurrentUser().id })[0];
-    }
-    const userRole = userObject ? userObject.role : -1;
-
-    // ///////////////
-    // Timeline link /
-    // ///////////////
-    let timeline;
-    if (this.state.course.type === 'ClassroomProgramCourse') {
-      const timelineLink = `${this._courseLinkParams()}/timeline`;
-      timeline = (
-        <div className="nav__item" id="timeline-link">
-          <p><Link to={timelineLink} activeClassName="active">{I18n.t('courses.timeline_link')}</Link></p>
-        </div>
-      );
-    }
-
-    // /////////////////
-    // Get Help button /
-    // /////////////////
-    let getHelp;
-    if (Features.enableGetHelpButton) {
-      getHelp = (
-        <div className="nav__button" id="get-help-button">
-          <GetHelpButton course={this.state.course} current_user={this.getCurrentUser()} key="get_help" />
-        </div>
-      );
-    }
-
+    const userRoles = this.state.current_user;
     // //////////////////////////////////
     // Admin / Instructor notifications /
     // //////////////////////////////////
-    if ((userRole > 0 || this.getCurrentUser().admin) && !this.state.course.legacy && !this.state.course.published) {
+
+    // For unpublished courses, when viewed by an instructor or admin
+    if (userRoles.isNonstudent && !this.state.course.legacy && !this.state.course.published) {
+      // If it's an unsubmitted ClassroomProgramCourse
       if (CourseStore.isLoaded() && !(this.state.course.submitted || this.state.published) && this.state.course.type === 'ClassroomProgramCourse') {
-        alerts.push((
-          <div className="notification" key="submit">
-            <div className="container">
-              <p>{I18n.t('courses.review_timeline')}</p>
-              <a href="#" onClick={this.submit} className="button">{I18n.t('application.submit')}</a>
+        // Show submit button if there is a timeline with trainings, or user is admin.
+        if (CourseUtils.hasTrainings(this.state.weeks) || userRoles.isAdmin) {
+          alerts.push((
+            <div className="notification" key="submit">
+              <div className="container">
+                <p>{I18n.t('courses.review_timeline')}</p>
+                <a href="#" onClick={this.submit} className="button">{I18n.t('application.submit')}</a>
+              </div>
             </div>
-          </div>
-        )
-        );
+          ));
+        // Show 'add trainings' message if there is a timeline with no trainings
+        } else if (this.state.weeks.length) {
+          alerts.push((
+            <div className="notification" key="submit">
+              <div className="container">
+                <p>Please add student trainings to your assignment timeline. Assigning training modules is an essential part of Wiki Ed&apos;s best practices.</p>
+                <a href={`${this._courseLinkParams()}/timeline`} className="button">Go to Timeline</a>
+              </div>
+            </div>
+          ));
+        // Show 'create a timeline' message if there is no timeline.
+        } else {
+          alerts.push((
+            <div className="notification" key="submit">
+              <div className="container">
+                <p>Please create a timeline for your course. You can build one from scratch from the Timeline tab, or use the Assignment Wizard to create a custom timeline based on Wiki Ed&apos;s best practices.</p>
+                <a href={`${this._courseLinkParams()}/timeline`} className="button">Launch the Wizard</a>
+              </div>
+            </div>
+          ));
+        }
       }
 
+      // When the course has been submitted
       if (this.state.course.submitted) {
-        if (!this.getCurrentUser().admin) {
+        // Show instructors the 'submitted' notice.
+        if (!userRoles.isAdmin) {
           alerts.push((
             <div className="notification" key="submit">
               <div className="container">
                 <p>{I18n.t('courses.submitted_note')}</p>
               </div>
             </div>
-          )
-          );
+          ));
+        // Instruct admins to approve the course by adding a campaign.
         } else {
           const homeLink = `${this._courseLinkParams()}/home`;
           alerts.push((
@@ -150,13 +145,13 @@ const Course = React.createClass({
                 <CourseLink to={homeLink} className="button">{I18n.t('courses.overview')}</CourseLink>
               </div>
             </div>
-          )
-          );
+          ));
         }
       }
     }
 
-    if ((userRole > 0 || this.getCurrentUser().admin) && this.state.course.published && UserStore.isLoaded() && UserStore.getFiltered({ role: 0 }).length === 0 && !this.state.course.legacy) {
+    // For published courses with no students, highlight the enroll link
+    if (userRoles.isNonstudent && this.state.course.published && UserStore.isLoaded() && UserStore.getFiltered({ role: 0 }).length === 0 && !this.state.course.legacy) {
       const enrollEquals = '?enroll=';
       const url = window.location.origin + this._courseLinkParams() + enrollEquals + this.state.course.passcode;
       alerts.push((
@@ -213,11 +208,13 @@ const Course = React.createClass({
     // Enrollment modal /
     // //////////////////
     let enrollCard;
-    if (this.props.location.query.enroll || this.props.location.query.enrolled) {
+    // Show the enroll card if either the `enroll` or `enrolled` param is present.
+    // The enroll param may be blank if the course has no passcode.
+    if (this.props.location.query.enroll !== undefined || this.props.location.query.enrolled) {
       enrollCard = (
         <EnrollCard
-          user={this.getCurrentUser()}
-          userRole={userRole}
+          user={this.state.current_user}
+          userRoles={userRoles}
           course={this.state.course}
           courseLink={this._courseLinkParams()}
           passcode={this.props.location.query.enroll}
@@ -227,48 +224,26 @@ const Course = React.createClass({
       );
     }
 
-    let homeLinkClassName;
-    if (this._onCourseIndex()) { homeLinkClassName = 'active'; }
-    const homeLink = `${this._courseLinkParams()}/home`;
-    const studentsLink = `${this._courseLinkParams()}/students`;
-    const articlesLink = `${this._courseLinkParams()}/articles`;
-    const uploadsLink = `${this._courseLinkParams()}/uploads`;
-    const activityLink = `${this._courseLinkParams()}/activity`;
-
     return (
       <div>
         <div className="course-nav__wrapper">
-          <Affix className="course_navigation" offset={57 + NotificationStore.getNotifications().length * 52}>
-            <div className="container">
-              {courseLink}
-              <nav>
-                <div className="nav__item" id="overview-link">
-                  <p><Link to={homeLink} className={homeLinkClassName} activeClassName="active">{I18n.t('courses.overview')}</Link></p>
-                </div>
-                {timeline}
-                <div className="nav__item" id="students-link">
-                  <p><Link to={studentsLink} activeClassName="active">{CourseUtils.i18n('students_short', this.state.course.string_prefix)}</Link></p>
-                </div>
-                <div className="nav__item" id="articles-link">
-                  <p><Link to={articlesLink} activeClassName="active">{I18n.t('articles.label')}</Link></p>
-                </div>
-                <div className="nav__item" id="uploads-link">
-                  <p><Link to={uploadsLink} activeClassName="active">{I18n.t('uploads.label')}</Link></p>
-                </div>
-                <div className="nav__item" id="activity-link">
-                  <p><Link to={activityLink} activeClassName="active">{I18n.t('activity.label')}</Link></p>
-                </div>
-                {getHelp}
-              </nav>
-            </div>
+          <Affix className="course_navigation" offset={57}>
+            <CourseNavbar
+              course={this.state.course}
+              location={this.props.location}
+              currentUser={this.state.current_user}
+              courseLink={this._courseLinkParams()}
+            />
+            <Notifications />
           </Affix>
         </div>
         <div className="course-alerts">
           {alerts}
         </div>
         <div className="course_main container">
+          <Confirm />
           {enrollCard}
-          {React.cloneElement(this.props.children, { course_id: this.getCourseID(), current_user: this.getCurrentUser(), course: this.state.course })}
+          {React.cloneElement(this.props.children, { course_id: courseId, current_user: this.state.current_user, course: this.state.course })}
         </div>
       </div>
     );

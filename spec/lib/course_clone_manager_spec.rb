@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 require "#{Rails.root}/lib/course_clone_manager"
 
@@ -14,7 +15,8 @@ describe CourseCloneManager do
            timeline_start: 11.months.ago,
            timeline_end: 9.months.ago,
            slug: 'School/Title_(Term)',
-           passcode: 'code')
+           passcode: 'code',
+           flags: { first_flag: 'something' })
     create(:campaign, id: 1)
     create(:campaigns_course, course_id: 1, campaign_id: 1)
     create(:user, id: 1)
@@ -22,7 +24,7 @@ describe CourseCloneManager do
            user_id: 1,
            course_id: 1,
            role: CoursesUsers::Roles::INSTRUCTOR_ROLE)
-    create(:user, id: 2)
+    create(:user, id: 2, username: 'user2')
     create(:courses_user,
            user_id: 2,
            course_id: 1,
@@ -68,7 +70,7 @@ describe CourseCloneManager do
       expect(clone.timeline_end).not_to eq(original.timeline_end)
     end
 
-    it 'does not carry over campaigns' do
+    it 'does not carry over campaigns (unless open_course_creation is enabled)' do
       expect(clone.campaigns).to be_empty
     end
 
@@ -104,6 +106,30 @@ describe CourseCloneManager do
 
     it 'marks the cloned status as PENDING' do
       expect(clone.cloned_status).to eq(Course::ClonedStatus::PENDING)
+    end
+
+    it 'does not carry over the course flags' do
+      expect(clone.flags).to eq({})
+    end
+  end
+
+  context 'when open course creation is enabled' do
+    before do
+      allow(Features).to receive(:open_course_creation?).and_return(true)
+      CourseCloneManager.new(Course.find(1), User.find(1)).clone!
+    end
+
+    it 'carries over campaigns' do
+      expect(clone.campaigns.first.id).to eq(1)
+    end
+  end
+
+  context 'when a course with the same temporary slug already exists' do
+    before { CourseCloneManager.new(Course.find(1), User.find(1)).clone! }
+    it 'returns the existing clone' do
+      existing_clone = Course.last
+      reclone = CourseCloneManager.new(Course.find(1), User.find(1)).clone!
+      expect(reclone).to eq(existing_clone)
     end
   end
 

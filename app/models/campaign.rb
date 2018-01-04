@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'csv'
 # == Schema Information
 #
@@ -18,9 +19,11 @@ require 'csv'
 
 #= Campaign model
 class Campaign < ActiveRecord::Base
-  has_many :campaigns_courses, class_name: CampaignsCourses, dependent: :destroy
-  has_many :campaigns_users, class_name: CampaignsUsers, dependent: :destroy
+  has_many :campaigns_courses, class_name: 'CampaignsCourses', dependent: :destroy
+  has_many :campaigns_users, class_name: 'CampaignsUsers', dependent: :destroy
   has_many :courses, through: :campaigns_courses
+  has_many :articles_courses, through: :courses
+  has_many :articles, -> { distinct }, through: :courses
   has_many :students, -> { distinct }, through: :courses
   has_many :instructors, -> { distinct }, through: :courses
   has_many :nonstudents, -> { distinct }, through: :courses
@@ -49,14 +52,9 @@ class Campaign < ActiveRecord::Base
   # Instance methods #
   ####################
 
-  # Count of total students eliminating other users in the course.
-  def students_without_nonstudents
-    students.where.not(id: nonstudents.pluck(:id))
-  end
-
   def users_to_csv(role, opts = {})
     csv_data = []
-    courses.each do |course|
+    courses.nonprivate.each do |course|
       users = course.send(role)
       users.each do |user|
         line = [user.username]
@@ -96,7 +94,7 @@ class Campaign < ActiveRecord::Base
     return if start.nil? && self.end.nil?
 
     # If any are present, all must be valid and self-consistent.
-    [:start, :end].each do |date_type|
+    %i[start end].each do |date_type|
       validate_date_attribute(date_type)
     end
 

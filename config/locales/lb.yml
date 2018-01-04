@@ -7,11 +7,14 @@ lb:
   application:
     cancel: Ofbriechen
     dashboard: Iwwersiicht iwwer d'Ännerungen op der Wiki
+    documentation: Dokumentatioun
     error: 'Et gouf e Feeler:'
     explore: Entdecken
     field_required: Dëst Feld ass obligatoresch
     field_invalid_characters: Dëst Feld huet net valabel Zeechen
     field_invalid_date: Dëst Feld brauch en Datum am Format JJJJ-MM-DD
+    field_invalid_date_time: De Schluss muss nom Ufank sinn. (Stonne gi vun 0 bis
+      23.)
     greeting2: Wëllkomm!
     greeting_extended: Wëllkomm op Wikipedia
     greeting: Salut!
@@ -21,10 +24,13 @@ lb:
     log_in: Aloggen
     log_out: Ausloggen
     recent_activity: Rezent Aktivitéit
+    report_problem: E Problem mellen
     search: eng Fro stellen
+    search_results: 'Resultater fir: %{search_terms}'
     sign_up_extended: Mat Wikipedia umellen
     sign_up_log_in_extended: mat Wikipedia
     sign_up: Schreift Iech an
+    submit: Schécken
     training: Formatioun
     change: Änneren
     details: Detailer
@@ -33,7 +39,7 @@ lb:
     explore_course_pages: D'Säite vun de Coursen entdecken
     explore_examples: Beispiller entdecken
     review_orientation: Orientatioun nokucken
-    blog_headline: Rezent Neiegkeete vu Wiki Ed
+    blog_headline: Rezent Neiegkeete vu Wiki Education
   home:
     explore: Entdecken
     log_in: Mat Wikipedia aloggen
@@ -45,6 +51,7 @@ lb:
   articles:
     assigned: Assignéiert Artikelen
     available: Disponibel Artikelen
+    deleted: (geläscht)
     edited: Geännert Artikelen
     edited_by: 'Geännert vum:'
     edited_mobile: Artikelen
@@ -77,8 +84,10 @@ lb:
     view_all: All weisen
     view_doc: D'Zomme vun de Kéiere wou all Artikel während dem Projet gewise gouf
     view_on_wiki: Op der Wiki weisen
+    wiki: Wiki
   assignments:
-    add_available: En disponibelen Artikel derbäisetzen
+    title_too_large: Den Titel däerf net méi wéi 255 Zeechen hunn
+    add_available: En disponibelen Artikel dobäisetzen
     no_available: Dëse Cours huet keng disponibel Artikelen.
     remove: Ewechhuelen
     review_self: En Artikel nokucken
@@ -87,7 +96,7 @@ lb:
     milestones:
       title: Kilometersténg
   campaign:
-    add_organizer: Organisateur derbäisetzen
+    add_organizer: Organisateur dobäisetzen
     campaign: Campagne
     campaigns: Campagnen
     campaign_not_updated: Campagne konnt net aktualiséiert ginn
@@ -98,6 +107,17 @@ lb:
     organizers: Organisateuren
     title: Titel
     use_start_end_dates: Ufanks- a Schlussdatumer benotzen
+  categories:
+    add_category: Kategorie dobäisetzen
+    add_template: Schabloun dobäisetzen
+    add_this_category: Dës Kategorie dobäisetzen
+    add_this_template: Dës Schabloun dobäisetzen
+    name: Numm
+    category_name: Numm vun der Kategorie
+    template_name: Numm vun der Schabloun
+    remove: Ewechhuelen
+  chat:
+    label: Chat
   courses:
     activity: Aktivitéit
     active_courses: Aktiv %{course_type}
@@ -110,13 +130,16 @@ lb:
     cancel: Ofbriechen
     campaigns: 'Campagnen:'
     campaign_courses: '%{title} Coursen'
+    campaign_articles: '%{title} Artikelen'
+    campaign_users: '%{title} Auteuren'
+    course: Cours
     course_description: Coursen
     courses: Coursen
     creation_date: Datum vun der Kreatioun
     creator:
       clone_previous: Virege Cours klonen
       clone_this: Dëse Cours klonen
-      clone_successful: Cours gekloont
+      clone_successful: Detailer fir gekloonte Cours aktualiséieren
       course_description: Beschreiwung vum Cours
       course_language: Originalsprooch
       course_subject: Sujet vum Cours
@@ -127,18 +150,25 @@ lb:
       expected_number: Erwaart Zuel vu Studenten
       find: Äre Cours fannen
       no_class_holidays: Ech hu keng Schoulvakanzen
+      role_description: Är Roll am Cours
       save_cloned_course: Neie Cours späicheren
       start_date: Ufanksdatum
       start_date_placeholder: Ufanksdatum (JJJJ-MM-DD)
       subject: Sujet
     current: Aktuell Coursen
+    data_download_info: Donnéeën am CSV-Format eroflueden.
     delete_course: Cours läschen
+    delete_suggestion: Läschen
     dismiss_survey: Verwerfen
     dismiss_survey_confirm: Sidd Dir sécher datt Dir dës Ëmfro permaentn ausblende
       wëllt?
+    download_stats_data: Statistiken eroflueden
     duration: Dauer vum Cours
+    edit_count: Zuel vun den Ännerungen
     edit_course_dates: Datume vum Cours änneren
+    enable_chat: Chat aktivéieren
     end: Schluss
+    ended: De Cours ass eriwwer.
     enroll: Aschreiwen
     enrollment: Aschreiwung
     error:
@@ -146,6 +176,10 @@ lb:
         aneren Titel, enger anerer Schoul oder enger anerer Dauer.
       user_exists: Pardon, de Benotzer %{username} gëtt et net.
       invalid_language_or_project: Net valabel Sprooch/Projet
+      invalid_slug: Schoul/Titel eidel fir de Cours.
+      duplicate_slug: Et gëtt schonn e Programm mam Numm %{slug}.
+    features_feedback: 'Automatiséiert Virschléi:'
+    feedback: Feedback
     instructor:
       one: Instrukter
       other: Instrukteren
@@ -155,6 +189,7 @@ lb:
     join_failed: Aschreiwung huet net funktionéiert.
     join_failure_details:
       cannot_join_twice: Benotzer kënne sech net zweemol an deeselwechte Cours aschreiwen.
+    join_no_passcode: Sidd Dir sécher datt Dir an dëse Cours goe wëllt?
     leave_confirmation: Sidd Dir sécher datt Dir aus dësem Cours erausgoe wëllt?
     leave_course: Aus dem Cours erausgoen
     loading: Lueden...
@@ -164,19 +199,32 @@ lb:
     nocourse: huet bei kengem Cours matgemaach.
     none: Keng
     no_available_actions: Keng disponibel Aktiounen
+    ores_plot: ORES
     overview: Haaptsäit
     revisions_doc: D'Zuel vun den ännerungen an de leschten %{timeframe}-Deeg
     school: Schoul
+    school_and_term: Institutioun/Dauer
     start: Ufank
     start_typing: Fänkt u mat Tippen
     students: Studenten
     students_count: '# Studenten'
     students_none: An dësem Cours si keng Studenten ageschriwwen.
     students_short: Studenten
+    suggestions_feedback: Hutt Dir Virschléi fir dës Funktioun ze verbesseren ? Deelt
+      eis se mat!
+    suggestions_sending: Feedback gëtt geschéckt...
+    suggestions_sent: Feedback geschéckt. Merci fir Ären Input.
+    suggestions_failed: Feedback konnt net geschéckt ginn. Probéiert méi spéit nach
+      eng Kéier.
     user_role: Roll
     course_details: Detailer vum Cours
+    subject: Sujet
+    timeline_enabled: Zäitplang aktivéiert
     timeline_link: Chronologie
     title: Titel
+    update_stats: Statistiken aktualiséieren
+    user_suggestions: 'Benotzervirschléi:'
+    user_suggestions_prompt: Är Virschléi fir d'Auteure vum Artikel
     view_other: Aner Campagne kucken
     view: Cours weisen
     view_wiki: Op Wikipedia kucken
@@ -189,8 +237,10 @@ lb:
       notification_message: Bedeelegt Iech un eiser Ëmfro zu dësem Cours.
       link: Bei der Ëmfro matmaachen
   courses_generic:
+    all_courses: All Progtrammer
     archived: Archivéiert Programmer
     cancel: Ofbriechen
+    course: Programm
     courses: Programmer
     campaigns: 'Campagnen:'
     campaign_courses: '%{title} Programmer'
@@ -199,14 +249,19 @@ lb:
       clone_this: Dëse Programm klonen
       course_description: Beschreiwung vum Programm
       course_school: Institutioun
+      course_term: Wéini
+      course_term_placeholder: Wéini
       course_title: Titel vum Programm
       find: E Programm sichen
+      participate_in_campaign: Bei enger Campagne matmaachen
+      save_cloned_course: Späicheren
     delete_course: Programm läschen
-    enroll: Auteur derbäisetzen
+    enroll: Auteur dobäisetzen
     enrollment: Participatioun
     join_course: Beim Programm matmaachen
     leave_course: Programm verloossen
     school: Institutioun
+    school_and_term: Institiutioun/Wéini
     students_short: Auteuren
     students_count: Zuel vu Participanten
     term: Wéini
@@ -219,7 +274,9 @@ lb:
     save: Späicheren
     edit_description: Beschreiwung änneren
     edit_details: Detailer änneren
+    edit_template: Schabloun änneren
   metrics:
+    last_update: Lescht Aktualisatioun
     activity: Rezent Aktivitéit
     articles_edited: Geännert Artikelen
     characters: Buschtawen
@@ -232,7 +289,7 @@ lb:
     uploads_in_use_count:
       one: Fichier deen an Artikele benotzt gëtt
       other: Fichieren déi an Artikele  benotzt ginn
-    word_count: Wierder derbäigesat
+    word_count: Wierder dobäigesat
     word_count_average: Duerchschnëttlech Zuel vu Wierder
   namespace:
     user: Benotzernummraum
@@ -254,11 +311,17 @@ lb:
     diff_show: Weisen
     diff_hide: Verstoppen
     edited_by: Geännert Vum
+    edited_on: Geännert de(n) %{edit_date}
     loading: Versioune lueden...
     none: Dëse Cours huet keng rezent Ännerungsaktivitéit.
     time_doc: D'Zäit vun all Versioun an Ärer lokaler Zäit
     title: Titel
     view_on_wiki: Ënnerscheed op der Wiki weisen
+    see_more: Méi gesinn
+  suggestions:
+    editing: Virschléi änneren
+    suggestion_docs:
+      does_not_exist: Dësen Artikel gëtt et net op Wikipedia.
   timeline:
     add_week: Woch dobäisetzen
     block_custom: Personaliséiert
@@ -266,6 +329,7 @@ lb:
     course_dates: Datume vum Cours
     course_end: Ënn vum Cours
     course_start: Ufank vum Cours
+    delete_timeline_and_start_over: Zäitplang läschen
     due_default: Nächst Woch fälleg
     empty_week_1: Fir unzefänken.
     empty_week_3: oder
@@ -303,7 +367,7 @@ lb:
     contribution_statistics: Statistik vun de Kontributiounen
     course_passcode: 'Passcode:'
     editors: Auteuren
-    enroll_confirmation: Sidd Dir sécher datt Dir %{username} derbäisetze wëllt?
+    enroll_confirmation: Sidd Dir sécher datt Dir %{username} dobäisetze wëllt?
     enrolled_success: '%{username} gouf dobäigesat!'
     first_name: Virnumm
     last_name: Familljennumm
@@ -326,9 +390,6 @@ lb:
     training_module_status: Status
     username: Benotzernumm
     username_placeholder: Benotzernumm
-    student_impact: Gesamtimpakt vum %{username} als Student
-    instructor_impact: Gesamtimpakt vum %{username} als Instrukter
-    instructors_student_impact: Gesamtimpakt vun de Studente vum %{username}
     role:
       visitor: Visiteur
       student: Student
@@ -336,6 +397,14 @@ lb:
       campus_volunteer: Campus-Fräiwëllegen
       online_volunteer: Online-Fräiwëllegen
       wiki_ed_staff: Mataarbechter vu Wiki Ed
+  user_profiles:
+    student_impact: Gesamtimpakt duerch %{username} als Student
+    instructor_impact: Gesamtimpakt duerch %{username} als Instrukter
+    instructors_student_impact: Gesamtimpakt duerch Studente vum %{username}
+    disclaimer: D'Informatioun déi dir ugitt gëtt ëffentlech disponibel gemaach.
+    bio_placeholder: Är Biographie dobäisetzen (fakultativ)
+    location_placeholder: Setzt Är Plaz dobäi (fakultativ)
+    institution_placeholder: Numm vun der Institutioun (fakultativ)
   wizard:
     course_dates: Datume vun de Coursen
     select_one_option: Wielt w.e.g. eng Optioun eraus.
@@ -354,6 +423,8 @@ lb:
       header: Net ënnerstëtzte Browser. :-(
   error_401:
     header: Net autoriséiert.>:-(
+    json_explanation: Et gesäit esou aus wéi wann Dir ausgeloggt gouf. Aktualiséiert
+      w.e.g., loggt Iech an a probéiert nach eng Kéier.
   error_404:
     header: Säit net fonnt. :-(
   error_500:
