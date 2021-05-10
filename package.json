@@ -114,7 +114,7 @@
     "striptags": "^2.1.1",
     "stylus": "0.54.5",
     "testdom": "^2.0.0",
-    "url-parse": "^1.1.7",
+    "url-parse": "^1.5.0",
     "velocity-animate": "^1.3.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
